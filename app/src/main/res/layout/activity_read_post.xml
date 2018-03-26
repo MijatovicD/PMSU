@@ -1,9 +1,99 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.example.dimitrije.pmsu.ReadPostActivity">
+    tools:context="com.example.dimitrije.pmsu.ReadPostActivity"
+    android:orientation="vertical">
 
-</android.support.constraint.ConstraintLayout>
+<RelativeLayout
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <TextView
+        android:id="@+id/title_Read"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:text="Title"
+        android:layout_marginLeft="80dp"/>
+
+
+    <ImageView
+        android:id="@+id/image_Read"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:maxHeight="8dp"
+        android:src="@mipmap/ic_launcher" />
+
+    <TextView
+        android:id="@+id/user_Read"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="User"
+        android:layout_marginTop="14dp"
+        android:layout_marginLeft="80dp"/>
+
+    <TextView
+        android:id="@+id/date_Read"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Date"
+        android:layout_marginTop="30dp"
+        android:layout_marginLeft="80dp"/>
+
+    <TextView
+        android:id="@+id/location_Read"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Location"
+        android:layout_marginTop="46dp"
+        android:layout_marginLeft="80dp"/>
+</RelativeLayout>
+
+    <TextView
+        android:id="@+id/description_Read"
+        android:layout_width="match_parent"
+        android:layout_height="112dp"
+        android:layout_marginTop="8dp"
+        android:text="Description" />
+
+
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+        <TextView
+            android:id="@+id/like_Read"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Likes"
+            android:layout_marginTop="8dp"/>
+
+        <TextView
+            android:id="@+id/dislike_Read"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Dislikes"
+            android:layout_marginTop="8dp"
+            android:layout_marginLeft="70dp"/>
+    </RelativeLayout>
+
+    <TextView
+        android:id="@+id/comments_Read"
+        android:layout_width="match_parent"
+        android:layout_height="166dp"
+        android:layout_marginTop="8dp"
+        android:text="Comments" />
+
+    <TextView
+        android:id="@+id/tag_Read"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:text="Tags" />
+
+</LinearLayout>
