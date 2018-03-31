@@ -1,8 +1,24 @@
 package com.example.dimitrije.pmsu;
 
+import android.content.Intent;
+import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBarDrawerToggle;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.Toolbar;
+import android.view.MenuItem;
+import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ListView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
+
+import com.example.dimitrije.pmsu.adapters.DrawerListAdapter;
+
+import java.util.ArrayList;
+
+import model.NavItem;
 
 public class ReadPostActivity extends AppCompatActivity {
 
@@ -11,31 +27,7 @@ public class ReadPostActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_read_post);
 
-        TextView titleText = findViewById(R.id.title_Read);
-        titleText.setText("Naslov posta");
-
-        TextView descriptionnText = findViewById(R.id.description_Read);
-        descriptionnText.setText("Opis posta");
-
-        TextView userText = findViewById(R.id.user_Read);
-        userText.setText("pera");
-
-        TextView dateText = findViewById(R.id.date_Read);
-        dateText.setText("26-3-2018");
-
-        TextView locationText = findViewById(R.id.location_Read);
-        locationText.setText("Novi Sad");
-
-        TextView likeText = findViewById(R.id.like_Read);
-        likeText.setText("Likes 8");
-
-        TextView dislikeText = findViewById(R.id.dislike_Read);
-        dislikeText.setText("Dislikes 4");
-
-        TextView tagText = findViewById(R.id.tag_Read);
-        tagText.setText("#hashtag");
     }
-
     @Override
     protected void onStart() {
         super.onStart();

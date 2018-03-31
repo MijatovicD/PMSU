@@ -4,25 +4,112 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.example.dimitrije.pmsu.PostsActivity">
+    tools:context="com.example.dimitrije.pmsu.PostsActivity"
+    android:orientation="vertical">
 
 
-    <Button
-        android:layout_width="wrap_content"
+    <android.support.design.widget.AppBarLayout
+        android:id="@+id/appbarPost"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:onClick="btnStartCreatePostsActivity"
-        android:text="CreatePosts"/>
+        android:theme="@style/AppTheme.AppBarOverlay">
 
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="ReadPosts"
-        android:onClick="btnStartReadPostsActivity"/>
 
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Settings"
-        android:onClick="btnStartSettingsActivity"/>
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/colorPrimary" />
+
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/toolbarPost"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:background="?attr/colorPrimary"
+            app:popupTheme="@style/AppTheme.PopupOverlay"
+            app:layout_scrollFlags="scroll|enterAlways">
+        </android.support.v7.widget.Toolbar>
+
+    </android.support.design.widget.AppBarLayout>
+
+    <android.support.v4.widget.DrawerLayout
+        android:id="@+id/drawerLayoutPost"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+
+        <RelativeLayout
+            android:id="@+id/mainContentPost"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" >
+            <android.support.v7.widget.LinearLayoutCompat
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+                <Button
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:onClick="btnStartCreatePostsActivity"
+                    android:text="CreatePosts"/>
+
+                <Button
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="ReadPosts"
+                    android:onClick="btnStartReadPostsActivity"/>
+            </android.support.v7.widget.LinearLayoutCompat>
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="280dp"
+            android:layout_height="match_parent"
+            android:id="@+id/drawerPanePost"
+            android:layout_gravity="start">
+
+            <RelativeLayout
+                android:id="@+id/profileBox"
+                android:layout_width="match_parent"
+                android:layout_height="100dp"
+                android:background="@color/material_blue_grey_800"
+                android:padding="8dp" >
+
+                <ImageView
+                    android:id="@+id/avatar"
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    android:layout_marginTop="15dp"
+                    />
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="42dp"
+                    android:layout_centerVertical="true"
+                    android:layout_marginLeft="15dp"
+                    android:layout_toRightOf="@+id/avatar"
+                    android:orientation="vertical" >
+
+                    <TextView
+                        android:id="@+id/userName"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="User"
+                        android:textColor="#fff"
+                        android:textSize="16sp"
+                        android:textStyle="bold" />
+
+                </LinearLayout>
+            </RelativeLayout>
+
+            <ListView
+                android:id="@+id/navListPost"
+                android:layout_width="280dp"
+                android:layout_height="match_parent"
+                android:layout_below="@+id/profileBox"
+                android:choiceMode="singleChoice"
+                android:background="#ffffffff" />
+
+
+        </RelativeLayout>
+
+    </android.support.v4.widget.DrawerLayout>
 
 </LinearLayout>
