@@ -7,96 +7,189 @@
     tools:context="com.example.dimitrije.pmsu.ReadPostActivity"
     android:orientation="vertical">
 
-<RelativeLayout
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content">
-
-    <TextView
-        android:id="@+id/title_Read"
+    <android.support.design.widget.AppBarLayout
+        android:id="@+id/appbarPost"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentTop="true"
-        android:text="Title"
-        android:layout_marginLeft="80dp"/>
+        android:theme="@style/AppTheme.AppBarOverlay">
 
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/colorPrimary" />
 
-    <ImageView
-        android:id="@+id/image_Read"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentTop="true"
-        android:maxHeight="8dp"
-        android:src="@mipmap/ic_launcher" />
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/toolbarPost"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:background="?attr/colorPrimary"
+            app:popupTheme="@style/AppTheme.PopupOverlay"
+            app:layout_scrollFlags="scroll|enterAlways">
+        </android.support.v7.widget.Toolbar>
 
-    <TextView
-        android:id="@+id/user_Read"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="User"
-        android:layout_marginTop="14dp"
-        android:layout_marginLeft="80dp"/>
+        <android.support.design.widget.TabLayout
+            android:id="@+id/tabs"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:tabMode="fixed"
+            app:tabGravity="fill"/>
 
-    <TextView
-        android:id="@+id/date_Read"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Date"
-        android:layout_marginTop="30dp"
-        android:layout_marginLeft="80dp"/>
+    </android.support.design.widget.AppBarLayout>
 
-    <TextView
-        android:id="@+id/location_Read"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Location"
-        android:layout_marginTop="46dp"
-        android:layout_marginLeft="80dp"/>
-</RelativeLayout>
-
-    <TextView
-        android:id="@+id/description_Read"
+    <android.support.v4.widget.DrawerLayout
+        android:id="@+id/drawerLayoutPost"
         android:layout_width="match_parent"
-        android:layout_height="112dp"
-        android:layout_marginTop="8dp"
-        android:text="Description" />
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <android.support.v4.view.ViewPager
+            android:id="@+id/viewpager"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:layout_behavior="@string/appbar_scrolling_view_behavior"/>
+
+        <RelativeLayout
+            android:id="@+id/mainContentPost"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" >
+            <android.support.v7.widget.LinearLayoutCompat
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+            </android.support.v7.widget.LinearLayoutCompat>
+
+            <TextView
+                android:id="@+id/title_Read"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignParentStart="true"
+                android:layout_alignParentTop="true"
+                android:layout_marginLeft="80dp"/>
 
 
-    <RelativeLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content">
-        <ImageButton
-            android:id="@+id/like_Read"
+            <ImageView
+                android:id="@+id/image_Read"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentStart="true"
+                android:layout_alignParentTop="true" />
+
+            <TextView
+                android:id="@+id/user_Read"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="14dp"
+                android:layout_marginLeft="80dp"/>
+
+            <TextView
+                android:id="@+id/date_Read"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="30dp"
+                android:layout_marginLeft="80dp"/>
+
+            <TextView
+                android:id="@+id/location_Read"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="46dp"
+                android:layout_marginLeft="80dp"/>
+
+        </RelativeLayout>
+
+
+        <TextView
+            android:id="@+id/description_Read"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Likes"
-            android:layout_marginTop="8dp"
-            android:src="@drawable/ic_action_like"
-            />
+            android:layout_marginTop="140dp" />
 
-        <ImageButton
-            android:id="@+id/dislike_Read"
+
+        <RelativeLayout
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Dislikes"
-            android:layout_marginTop="8dp"
-            android:layout_marginLeft="70dp"
-            android:src="@drawable/ic_action_dislike"/>
-    </RelativeLayout>
+            android:layout_height="wrap_content">
 
-    <TextView
-        android:id="@+id/comments_Read"
-        android:layout_width="match_parent"
-        android:layout_height="166dp"
-        android:layout_marginTop="8dp"
-        android:text="Comments" />
 
-    <TextView
-        android:id="@+id/tag_Read"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:text="Tags" />
+            <TextView
+                android:id="@+id/countLike"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="260dp"
+                android:layout_marginLeft="54dp"/>
+
+
+            <TextView
+                android:id="@+id/countDislike"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="260dp"
+                android:layout_marginLeft="140dp"/>
+
+            <TextView
+                android:id="@+id/comments_Read"
+                android:layout_width="match_parent"
+                android:layout_height="166dp"
+                android:layout_marginTop="300dp" />
+
+            <TextView
+                android:id="@+id/tag_Read"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="450dp" />
+        </RelativeLayout>
+
+
+        <RelativeLayout
+            android:layout_width="280dp"
+            android:layout_height="match_parent"
+            android:id="@+id/drawerPaneRead"
+            android:layout_gravity="start">
+
+            <RelativeLayout
+                android:id="@+id/profileBox"
+                android:layout_width="match_parent"
+                android:layout_height="100dp"
+                android:background="@color/material_blue_grey_800"
+                android:padding="8dp" >
+
+                <ImageView
+                    android:id="@+id/avatar"
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    android:layout_marginTop="15dp"
+                    />
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="42dp"
+                    android:layout_centerVertical="true"
+                    android:layout_marginLeft="15dp"
+                    android:layout_toRightOf="@+id/avatar"
+                    android:orientation="vertical" >
+
+                    <TextView
+                        android:id="@+id/userName"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="User"
+                        android:textColor="#fff"
+                        android:textSize="16sp"
+                        android:textStyle="bold" />
+
+                </LinearLayout>
+            </RelativeLayout>
+
+            <ListView
+                android:id="@+id/navListPost"
+                android:layout_width="280dp"
+                android:layout_height="match_parent"
+                android:layout_below="@+id/profileBox"
+                android:choiceMode="singleChoice"
+                android:background="#ffffffff" />
+
+
+        </RelativeLayout>
+
+    </android.support.v4.widget.DrawerLayout>
+
 
 </LinearLayout>

@@ -49,7 +49,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Title"/>
+                    android:text="@string/titleRead"/>
 
                 <EditText
                     android:id="@+id/titleCreate"
@@ -61,7 +61,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Description"
+                    android:text="@string/descriptionRead"
                     android:layout_marginTop="8dp"
                     android:layout_marginBottom="8dp"/>
 
@@ -71,12 +71,14 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="8dp"/>
 
-                <Button
+                <ImageButton
                     android:id="@+id/photoCreate"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="8dp"
-                    android:text="Photo"/>
+                    android:text="Add image"
+                    android:src="@drawable/ic_action_image"/>
+
             </LinearLayout>
 
             <android.support.v7.widget.LinearLayoutCompat
@@ -92,14 +94,14 @@
             android:layout_gravity="start">
 
             <RelativeLayout
-                android:id="@+id/profileBoxCreate"
+                android:id="@+id/profileBox"
                 android:layout_width="match_parent"
                 android:layout_height="100dp"
                 android:background="@color/material_blue_grey_800"
                 android:padding="8dp" >
 
                 <ImageView
-                    android:id="@+id/avatarCreate"
+                    android:id="@+id/avatar"
                     android:layout_width="50dp"
                     android:layout_height="50dp"
                     android:layout_marginTop="15dp"
@@ -114,7 +116,7 @@
                     android:orientation="vertical" >
 
                     <TextView
-                        android:id="@+id/userNameCreate"
+                        android:id="@+id/userName"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="User"

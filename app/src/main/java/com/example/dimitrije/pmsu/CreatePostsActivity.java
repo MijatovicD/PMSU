@@ -1,9 +1,9 @@
 package com.example.dimitrije.pmsu;
 
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
@@ -14,10 +14,12 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
+import android.widget.Toast;
 
 import com.example.dimitrije.pmsu.adapters.DrawerListAdapter;
 
 import java.util.ArrayList;
+import java.util.Set;
 
 import model.NavItem;
 
@@ -29,7 +31,6 @@ public class CreatePostsActivity extends AppCompatActivity {
     private CharSequence mDrawerTittleCreate;
     private CharSequence mTitleCreate;
     private ArrayList<NavItem> mNavItemCreate = new ArrayList<>();
-    private AlertDialog dialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,6 +65,7 @@ public class CreatePostsActivity extends AppCompatActivity {
                 R.string.drawer_open, R.string.drawer_close){
 
             public void onDrawerClosed(View view){
+                getActionBar().setTitle(mTitleCreate);
                 getSupportActionBar().setTitle(mTitleCreate);
                 invalidateOptionsMenu();
             }
@@ -73,14 +75,6 @@ public class CreatePostsActivity extends AppCompatActivity {
                 invalidateOptionsMenu();
             }
         };
-
-        mDrawerLayoutCreate.setDrawerListener(mDrawerToggleCreate);
-        mDrawerToggleCreate.syncState();
-
-        if (savedInstanceState == null){
-            selectItemFromDrawerCreate(0);
-        }
-
     }
 
     private void prepareMenu(ArrayList<NavItem> mNavItems){
@@ -90,8 +84,14 @@ public class CreatePostsActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item){
-        if (mDrawerToggleCreate.onOptionsItemSelected(item)){
-            return true;
+        switch (item.getItemId()){
+            case R.id.menuSetting:
+                Intent i = new Intent(this, SettingsActivity.class);
+                startActivity(i);
+                return true;
+            case R.id.shareMenu:
+                Toast.makeText(this, "Shared", Toast.LENGTH_SHORT).show();
+                return true;
         }
         return super.onOptionsItemSelected(item);
     }
@@ -99,7 +99,7 @@ public class CreatePostsActivity extends AppCompatActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.menu_post, menu);
+        inflater.inflate(R.menu.menu_create, menu);
         return super.onCreateOptionsMenu(menu);
     }
 

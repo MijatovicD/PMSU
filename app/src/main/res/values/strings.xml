@@ -1,6 +1,20 @@
 <resources>
     <string name="app_name">PMSU</string>
 
+    <string name="titleRead">Title</string>
+    <string name="userRead">User</string>
+    <string name="dateRead">Date</string>
+    <string name="locationRead">Location</string>
+    <string name="descriptionRead">Description</string>
+    <string name="commentRead">Comments</string>
+    <string name="tagRead">Tags</string>
+
     <string name="drawer_open">Open drawer</string>
     <string name="drawer_close">Close drawer</string>
+
+    <string name="sortPostByDate">Sort date</string>
+    <string name="sortPostByPopularity">Sort popularity</string>
+
+    <string name="sortCommentByDate">Sort date comment</string>
+    <string name="sortCommentByPopularity">Sort popularity comment</string>
 </resources>
