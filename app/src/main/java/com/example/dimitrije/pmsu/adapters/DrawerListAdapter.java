@@ -5,14 +5,13 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.dimitrije.pmsu.R;
 
 import java.util.ArrayList;
-import model.NavItem;
+import com.example.dimitrije.pmsu.model.NavItem;
 
 /**
  * Created by Dimitrije on 4/17/2018.

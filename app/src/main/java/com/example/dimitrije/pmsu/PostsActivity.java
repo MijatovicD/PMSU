@@ -1,5 +1,6 @@
 package com.example.dimitrije.pmsu;
 
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
@@ -9,13 +10,16 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.dimitrije.pmsu.adapters.DrawerListAdapter;
@@ -26,11 +30,21 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
+import java.util.List;
 
 
-import model.NavItem;
-import model.Post;
-import model.User;
+import com.example.dimitrije.pmsu.model.NavItem;
+import com.example.dimitrije.pmsu.model.Post;
+import com.example.dimitrije.pmsu.model.User;
+import com.example.dimitrije.pmsu.service.PostService;
+import com.example.dimitrije.pmsu.service.ServiceUtils;
+import com.google.gson.Gson;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
 
 public class PostsActivity extends AppCompatActivity {
     private DrawerLayout mDrawerLayout;
@@ -40,16 +54,17 @@ public class PostsActivity extends AppCompatActivity {
     private CharSequence mDrawerTittle;
     private CharSequence mTitle;
     private ArrayList<NavItem> mNavItem = new ArrayList<>();
-    private ArrayList<Post> posts = new ArrayList<Post>();
+    private List<Post> posts = new ArrayList<>();
     private SharedPreferences sharedPreferences;
     private boolean sortPostByDate;
     private boolean sortPostByPopularity;
+    private PostService postService;
+    private PostAdapter postAdapter;
 
+    private ListView listView;
 
     private Post post = new Post();
     private Post post1 = new Post();
-    private User user1 = new User();
-    private User user2 = new User();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,6 +76,7 @@ public class PostsActivity extends AppCompatActivity {
         mTitle = mDrawerTittle = getTitle();
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawerLayoutPost);
         mDrawerList = (ListView) findViewById(R.id.navListPost);
+        listView = (ListView) findViewById(R.id.postList);
 
         mDrawerPane = (RelativeLayout) findViewById(R.id.drawerPanePost);
         DrawerListAdapter adapter = new DrawerListAdapter( this, mNavItem);
@@ -84,7 +100,7 @@ public class PostsActivity extends AppCompatActivity {
                 R.string.drawer_open, R.string.drawer_close){
 
             public void onDrawerClosed(View view){
-                getActionBar().setTitle(mTitle);
+//                getActionBar().setTitle(mTitle);
                 getSupportActionBar().setTitle(mTitle);
                 invalidateOptionsMenu();
             }
@@ -95,9 +111,36 @@ public class PostsActivity extends AppCompatActivity {
             }
         };
 
+
+        TextView userText = findViewById(R.id.userName);
         mDrawerLayout.addDrawerListener(mDrawerToggle);
         mDrawerToggle.syncState();
 
+        sharedPreferences = getSharedPreferences(LoginActivity.MyPres, Context.MODE_PRIVATE);
+        if(sharedPreferences.contains(LoginActivity.Username)){
+            userText.setText(sharedPreferences.getString(LoginActivity.Name, ""));
+        }
+
+
+        postService = ServiceUtils.postService;
+        Call call = postService.getPosts();
+
+        call.enqueue(new Callback<List<Post>>() {
+            @Override
+            public void onResponse(Call<List<Post>> call, Response<List<Post>> response) {
+
+                if(response.isSuccessful()){
+                    posts = response.body();
+                    listView.setAdapter(new PostAdapter(PostsActivity.this, posts));
+                }
+            }
+
+            @Override
+            public void onFailure(Call<List<Post>> call, Throwable t) {
+                Toast.makeText(getApplicationContext(), t.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
+/*
         post.setTitle("Mark Zucerberg prodao Facebook");
         post.setDate(new Date(2018-1900, 04-01, 23));
         post.setDescription("Opis za post broj 1");
@@ -120,27 +163,37 @@ public class PostsActivity extends AppCompatActivity {
         posts.add(post1);
 
         PostAdapter postAdapter = new PostAdapter(this, posts);
-        ListView listView = findViewById(R.id.postList);
 
         listView.setAdapter(postAdapter);
-
+*/
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
 
-                Post post = posts.get(i);
+                post = posts.get(i);
 
+                postService = ServiceUtils.postService;
+                Call<Post> call = postService.getPost(post.getId());
 
-                Intent intent = new Intent(PostsActivity.this,ReadPostActivity.class);
-                intent.putExtra("title",post.getTitle());
-                String formatedDate = new SimpleDateFormat("yyyy.MM.dd").format(post.getDate());
-                intent.putExtra("date",formatedDate);
-                intent.putExtra("author",post.getAuthor().getUsername());
-                intent.putExtra("description",post.getDescription());
-                intent.putExtra("likes",String.valueOf(post.getLikes()));
-                intent.putExtra("dislikes",String.valueOf(post.getDislikes()));
+                call.enqueue(new Callback<Post>() {
+                    @Override
+                    public void onResponse(Call<Post> call, Response<Post> response) {
 
-                startActivity(intent);
+                        if (response.isSuccessful()){
+                            post = response.body();
+                            Intent intent = new Intent(PostsActivity.this,ReadPostActivity.class);
+                            intent.putExtra("Post", new Gson().toJson(post));
+
+                            startActivity(intent);
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Call<Post> call, Throwable t) {
+                        Toast.makeText(getApplicationContext(), t.getMessage(), Toast.LENGTH_SHORT).show();
+                    }
+                });
+
             }
         });
 
@@ -187,6 +240,7 @@ public class PostsActivity extends AppCompatActivity {
         mNavItems.add(new NavItem("Posts", "Postovi", R.drawable.ic_action_post));
         mNavItems.add(new NavItem("Settigs", "Podesavanja", R.drawable.ic_action_settings));
         mNavItems.add(new NavItem("Create post", "Kreiraj post", R.drawable.ic_action_add));
+        mNavItems.add(new NavItem("Log out", "Odjava", R.drawable.ic_action_logout));
     }
 
     @Override
@@ -197,7 +251,8 @@ public class PostsActivity extends AppCompatActivity {
                 startActivity(intent);
                 return true;
             case R.id.menuCreate:
-                Toast.makeText(this, "Create", Toast.LENGTH_LONG).show();
+                Intent create = new Intent(this, CreatePostsActivity.class);
+                startActivity(create);
                 return true;
         }
         return super.onOptionsItemSelected(item);
@@ -229,6 +284,10 @@ public class PostsActivity extends AppCompatActivity {
         else if (position == 2){
             Intent i = new Intent(this, CreatePostsActivity.class);
             startActivity(i);
+        }
+        else if (position == 3){
+            Intent ite = new Intent(this, LoginActivity.class);
+            startActivity(ite);
         }
 
         mDrawerList.setItemChecked(position, true);

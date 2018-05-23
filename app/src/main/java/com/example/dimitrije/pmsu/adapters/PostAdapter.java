@@ -1,14 +1,10 @@
 package com.example.dimitrije.pmsu.adapters;
 
-import android.app.Activity;
 import android.content.Context;
-import android.support.annotation.NonNull;
-import android.support.v4.app.FragmentActivity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
-import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -16,8 +12,9 @@ import com.example.dimitrije.pmsu.R;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.List;
 
-import model.Post;
+import com.example.dimitrije.pmsu.model.Post;
 
 /**
  * Created by Dimitrije on 4/18/2018.
@@ -25,7 +22,7 @@ import model.Post;
 
 public class PostAdapter extends ArrayAdapter<Post> {
 
-    public PostAdapter(Context context, ArrayList<Post> posts){
+    public PostAdapter(Context context, List<Post> posts){
         super(context, 0, posts);
     }
 
@@ -48,7 +45,7 @@ public class PostAdapter extends ArrayAdapter<Post> {
 
         dateView.setText(date);
 
-        imageView.setImageResource(R.drawable.ic_action_post);
+        imageView.setImageBitmap(post.getPhoto());
 
         return convertView;
     }

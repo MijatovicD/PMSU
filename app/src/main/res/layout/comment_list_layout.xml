@@ -4,6 +4,10 @@
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
                 <RelativeLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content">
@@ -32,7 +36,7 @@
                         android:layout_below="@id/titleComentList" />
 
                     <TextView
-                        android:id="@+id/comment_view"
+                        android:id="@+id/descriptionComment"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_margin="10dp"
@@ -43,7 +47,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:src="@drawable/ic_action_like"
-                        android:layout_below="@id/comment_view"
+                        android:layout_below="@id/descriptionComment"
                         android:background="@null" />
 
                     <TextView
@@ -51,7 +55,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_toRightOf="@id/likeCommentList"
-                        android:layout_below="@id/comment_view"
+                        android:layout_below="@id/descriptionComment"
                         android:layout_marginLeft="10dp"
                         android:layout_marginRight="10dp"
                         android:layout_marginTop="10dp" />
@@ -62,17 +66,27 @@
                         android:layout_height="wrap_content"
                         android:src="@drawable/ic_action_dislike"
                         android:layout_toRightOf="@id/likeCommentListText"
-                        android:layout_below="@id/comment_view"
+                        android:layout_below="@id/descriptionComment"
                         android:background="@null"/>
 
                     <TextView
-                        android:id="@+id/dislike_comment_text"
+                        android:id="@+id/dislikeCommentListText"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_toRightOf="@id/dislike_comment_image"
-                        android:layout_below="@id/comment_view"
+                        android:layout_below="@id/descriptionComment"
                         android:layout_marginLeft="10dp"
                         android:layout_marginTop="10dp"
                         />
+                    <ImageButton
+                        android:id="@+id/deleteComment"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="340dp"
+                        android:layout_marginTop="120dp"
+                        android:src="@drawable/ic_action_delete"
+                        android:background="@null"/>
                 </RelativeLayout>
+
+    </ScrollView>
 </RelativeLayout>

@@ -1,6 +1,7 @@
 package com.example.dimitrije.pmsu;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
@@ -24,8 +25,19 @@ import com.example.dimitrije.pmsu.fragments.ReadPostFragment;
 import com.example.dimitrije.pmsu.adapters.ViewPagerAdapter;
 
 import java.util.ArrayList;
+import java.util.List;
 
-import model.NavItem;
+import com.example.dimitrije.pmsu.model.NavItem;
+import com.example.dimitrije.pmsu.model.Post;
+import com.example.dimitrije.pmsu.model.User;
+import com.example.dimitrije.pmsu.service.PostService;
+import com.example.dimitrije.pmsu.service.ServiceUtils;
+import com.example.dimitrije.pmsu.service.UserService;
+import com.google.gson.Gson;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 
 public class ReadPostActivity extends AppCompatActivity {
@@ -39,6 +51,13 @@ public class ReadPostActivity extends AppCompatActivity {
     private AlertDialog dialog;
     private ViewPager viewPager;
     private TabLayout tabLayout;
+    private Post post = new Post();
+    private User user = new User();
+    private List<Post> posts = new ArrayList<Post>();
+    private PostService postService;
+    private UserService userService;
+    String userPreferences;
+    private SharedPreferences sharedPreferences;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -112,11 +131,39 @@ public class ReadPostActivity extends AppCompatActivity {
         mDrawerLayoutCreate.addDrawerListener(mDrawerToggleCreate);
         mDrawerToggleCreate.syncState();
 
+
+        String json = null;
+        Bundle extras = getIntent().getExtras();
+        if(extras != null){
+            json = extras.getString("Post");
+        }
+        post = new Gson().fromJson(json, Post.class);
+        postService = ServiceUtils.postService;
+
+//        userPreferences = sharedPreferences.getString(LoginActivity.Username, "");
+
+        userService = ServiceUtils.userService;
+
+        Call<User> call = userService.getByUsername(userPreferences);
+
+        call.enqueue(new Callback<User>() {
+            @Override
+            public void onResponse(Call<User> call, Response<User> response) {
+                user = response.body();
+            }
+
+            @Override
+            public void onFailure(Call<User> call, Throwable t) {
+
+            }
+        });
     }
+
 
     private void prepareMenu(ArrayList<NavItem> mNavItems){
         mNavItems.add(new NavItem("Posts", "Postovi", R.drawable.ic_action_post));
         mNavItems.add(new NavItem("Settigs", "Podesavanja", R.drawable.ic_action_settings));
+        mNavItems.add(new NavItem("Logout", "Odajva", R.drawable.ic_action_logout));
     }
 
     @Override
@@ -127,6 +174,22 @@ public class ReadPostActivity extends AppCompatActivity {
                 startActivity(i);
                 return true;
             case R.id.menuDelete:
+                postService = ServiceUtils.postService;
+
+                Call<Post> call = postService.deletePost(post.getId());
+
+                call.enqueue(new Callback<Post>() {
+                    @Override
+                    public void onResponse(Call<Post> call, Response<Post> response) {
+
+                    }
+
+                    @Override
+                    public void onFailure(Call<Post> call, Throwable t) {
+                        Toast.makeText(getApplicationContext(), t.getMessage(), Toast.LENGTH_SHORT).show();
+                    }
+                });
+
                 Toast.makeText(this, "Deleted", Toast.LENGTH_LONG).show();
                 return true;
         }
@@ -155,6 +218,9 @@ public class ReadPostActivity extends AppCompatActivity {
         if (position == 1){
             Intent setting = new Intent(this, SettingsActivity.class);
             startActivity(setting);
+        }  if (position == 2){
+            Intent logout = new Intent(this, LoginActivity.class);
+            startActivity(logout);
         }
 
         mDrawerListCreate.setItemChecked(position, true);
@@ -177,6 +243,8 @@ public class ReadPostActivity extends AppCompatActivity {
     @Override
     protected void onRestart() {
         super.onRestart();
+        finish();
+        startActivity(getIntent());
     }
 
     @Override

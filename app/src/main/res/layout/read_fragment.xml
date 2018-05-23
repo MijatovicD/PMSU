@@ -61,10 +61,11 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="190dp"
-                android:src="@drawable/ic_action_like"/>
+                android:src="@drawable/ic_action_like"
+                android:background="@null"/>
 
             <TextView
-                android:id="@+id/countLike"
+                android:id="@+id/countLikee"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="190dp"
@@ -76,10 +77,11 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="190dp"
                 android:layout_marginLeft="75dp"
-                android:src="@drawable/ic_action_dislike"/>
+                android:src="@drawable/ic_action_dislike"
+                android:background="@null"/>
 
             <TextView
-                android:id="@+id/countDislike"
+                android:id="@+id/countDislikee"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="190dp"
@@ -89,7 +91,7 @@
                 android:id="@+id/tag_Read"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="450dp" />
+                android:layout_marginTop="250dp"/>
         </RelativeLayout>
 
 
