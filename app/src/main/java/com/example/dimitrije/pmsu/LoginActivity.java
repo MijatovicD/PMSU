@@ -43,7 +43,6 @@ public class LoginActivity extends AppCompatActivity {
         sharedPreferences = getSharedPreferences(MyPres, Context.MODE_PRIVATE);
         String userNamePreferences = sharedPreferences.getString(Username, "");
 
-
             loginBtn.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {

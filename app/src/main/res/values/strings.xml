@@ -17,4 +17,9 @@
 
     <string name="sortCommentByDate">Sort date comment</string>
     <string name="sortCommentByPopularity">Sort popularity comment</string>
+
+    <string name="no">No</string>
+    <string name="sure">Sure</string>
+    <string name="oops">Ooops</string>
+    <string name="location_disabled_message">Your Locations seems to be disabled, do you want to enable it?</string>
 </resources>

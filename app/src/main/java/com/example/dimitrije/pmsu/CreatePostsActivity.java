@@ -3,8 +3,13 @@ package com.example.dimitrije.pmsu;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
+import android.location.Location;
+import android.location.LocationManager;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
@@ -27,7 +32,10 @@ import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
+import com.example.dimitrije.pmsu.dialogs.LocationDialog;
+import com.example.dimitrije.pmsu.fragments.MapFragment;
 import com.example.dimitrije.pmsu.model.Comment;
 import com.example.dimitrije.pmsu.model.NavItem;
 import com.example.dimitrije.pmsu.model.Post;
@@ -67,8 +75,9 @@ public class CreatePostsActivity extends AppCompatActivity {
     private Comment comment = new Comment();
     private static Tag tag;
     private SharedPreferences sharedPreferences;
+    private SharedPreferences map;
     private UserService userService;
-
+    private AlertDialog dialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -83,7 +92,7 @@ public class CreatePostsActivity extends AppCompatActivity {
         mDrawerListCreate = (ListView) findViewById(R.id.navListCreate);
 
         mDrawerPaneCreate = (RelativeLayout) findViewById(R.id.drawerPaneCreate);
-        DrawerListAdapter drawerListAdapter = new DrawerListAdapter( this, mNavItemCreate);
+        DrawerListAdapter drawerListAdapter = new DrawerListAdapter(this, mNavItemCreate);
         mDrawerListCreate.setAdapter(drawerListAdapter);
 
         mDrawerListCreate.setOnItemClickListener(new CreatePostsActivity.DrawerItemClickListenerCreate());
@@ -107,22 +116,22 @@ public class CreatePostsActivity extends AppCompatActivity {
 
         final android.support.v7.app.ActionBar actionBarCreate = getSupportActionBar();
 
-        if (actionBarCreate != null){
+        if (actionBarCreate != null) {
             actionBarCreate.setDisplayHomeAsUpEnabled(true);
             actionBarCreate.setHomeAsUpIndicator(R.drawable.ic_drawer);
             actionBarCreate.setHomeButtonEnabled(true);
         }
 
         mDrawerToggleCreate = new ActionBarDrawerToggle(this, mDrawerLayoutCreate, toolbarCreate,
-                R.string.drawer_open, R.string.drawer_close){
+                R.string.drawer_open, R.string.drawer_close) {
 
-            public void onDrawerClosed(View view){
+            public void onDrawerClosed(View view) {
                 getActionBar().setTitle(mTitleCreate);
                 getSupportActionBar().setTitle(mTitleCreate);
                 invalidateOptionsMenu();
             }
 
-            public void onDrawerOpened(View drawerView){
+            public void onDrawerOpened(View drawerView) {
                 getSupportActionBar().setTitle("MyNews");
                 invalidateOptionsMenu();
             }
@@ -133,7 +142,8 @@ public class CreatePostsActivity extends AppCompatActivity {
         userService = ServiceUtils.userService;
 
         sharedPreferences = getSharedPreferences(LoginActivity.MyPres, Context.MODE_PRIVATE);
-        if (sharedPreferences.contains(LoginActivity.Username)){
+        map = getSharedPreferences(MapFragment.Prefe, Context.MODE_PRIVATE);
+        if (sharedPreferences.contains(LoginActivity.Username)) {
 
         }
 
@@ -145,7 +155,7 @@ public class CreatePostsActivity extends AppCompatActivity {
             @Override
             public void onResponse(Call<User> call, Response<User> response) {
                 user = response.body();
-                System.out.println("USER GEEET "+ user);
+                System.out.println("USER GEEET " + user);
             }
 
             @Override
@@ -155,15 +165,15 @@ public class CreatePostsActivity extends AppCompatActivity {
         });
     }
 
-    private void prepareMenu(ArrayList<NavItem> mNavItems){
+    private void prepareMenu(ArrayList<NavItem> mNavItems) {
         mNavItems.add(new NavItem("Posts", "Postovi", R.drawable.ic_action_post));
         mNavItems.add(new NavItem("Settigs", "Podesavanja", R.drawable.ic_action_settings));
         mNavItems.add(new NavItem("Logout", "Odjava", R.drawable.ic_action_logout));
     }
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem item){
-        switch (item.getItemId()){
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
             case R.id.menuSetting:
                 Intent i = new Intent(this, SettingsActivity.class);
                 startActivity(i);
@@ -174,7 +184,7 @@ public class CreatePostsActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    public void addPost(){
+    public void addPost() {
         final Post post = new Post();
 
         String title = titleText.getText().toString();
@@ -188,6 +198,16 @@ public class CreatePostsActivity extends AppCompatActivity {
         post.setDislikes(0);
         Date date = Calendar.getInstance().getTime();
         post.setDate(date);
+/*
+        Location location = new Location(post.getLocation());
+        post.setLatitude(location.getLatitude());
+        post.setLongitude(location.getLongitude());
+*/
+
+        Float longitude = map.getFloat(MapFragment.Longitude, 0);
+        Float latitude = map.getFloat(MapFragment.Latitude, 0);
+        post.setLongitude(longitude);
+        post.setLatitude(latitude);
 
         Call<Post> call = postService.addPost(post);
 
@@ -195,6 +215,7 @@ public class CreatePostsActivity extends AppCompatActivity {
             @Override
             public void onResponse(Call<Post> call, Response<Post> response) {
                 postBody = response.body();
+
             }
 
             @Override
@@ -206,6 +227,18 @@ public class CreatePostsActivity extends AppCompatActivity {
         addTag();
     }
 
+
+
+    private void showLocationDialog(){
+        if(dialog == null){
+            dialog = new LocationDialog(this).prepareDialog();
+        }else{
+            if(dialog.isShowing()){
+                dialog.dismiss();
+            }
+        }
+        dialog.show();
+    }
 
     public boolean validate(){
         if(titleText.equals("") || titleText == null){
@@ -259,6 +292,7 @@ public class CreatePostsActivity extends AppCompatActivity {
         }
     }
 
+
     private void selectItemFromDrawerCreate(int position){
         if (position == 0){
             Intent post = new Intent(this, PostsActivity.class);
@@ -270,7 +304,9 @@ public class CreatePostsActivity extends AppCompatActivity {
         }
         if (position == 2){
             Intent logout = new Intent(this, LoginActivity.class);
+            sharedPreferences.edit().clear().commit();
             startActivity(logout);
+            finish();
         }
 
         mDrawerListCreate.setItemChecked(position, true);
@@ -293,11 +329,14 @@ public class CreatePostsActivity extends AppCompatActivity {
     @Override
     protected void onRestart() {
         super.onRestart();
+        finish();
+        startActivity(getIntent());
     }
 
     @Override
     protected void onResume() {
         super.onResume();
+        showLocationDialog();
     }
 
     @Override

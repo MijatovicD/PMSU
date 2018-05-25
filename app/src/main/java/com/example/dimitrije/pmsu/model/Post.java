@@ -40,11 +40,15 @@ public class Post implements Serializable{
     @Expose
     private Date date;
 
-    @SerializedName("location")
+    @SerializedName("longitude")
     @Expose
-    private Location location;
+    private float longitude;
 
-    @SerializedName("tags")
+    @SerializedName("latitude")
+    @Expose
+    private float latitude;
+
+    @SerializedName("tag")
     @Expose
     private List<Tag> tags;
 
@@ -63,7 +67,7 @@ public class Post implements Serializable{
     public Post() {
     }
 
-    public Post(int id, String title, String description, Bitmap photo, User author, Date date, List<Comment> comments, int likes, int dislikes) {
+    public Post(int id, String title, String description, Bitmap photo, User author, Date date, List<Comment> comments, List<Tag> tags, int likes, int dislikes, float latitude, float longitude) {
         this.id = id;
         this.title = title;
         this.description = description;
@@ -71,8 +75,11 @@ public class Post implements Serializable{
         this.author = author;
         this.date = date;
         this.comments = comments;
+        this.tags = tags;
         this.likes = likes;
         this.dislikes = dislikes;
+        this.longitude = longitude;
+        this.latitude = latitude;
     }
 
     public int getId() {
@@ -123,12 +130,20 @@ public class Post implements Serializable{
         this.date = date;
     }
 
-    public Location getLocation() {
-        return location;
+    public double getLongitude() {
+        return longitude;
     }
 
-    public void setLocation(Location location) {
-        this.location = location;
+    public void setLongitude(float longitude) {
+        this.longitude = longitude;
+    }
+
+    public double getLatitude() {
+        return latitude;
+    }
+
+    public void setLatitude(float latitude) {
+        this.latitude = latitude;
     }
 
     public List<Tag> getTags() {
@@ -172,7 +187,6 @@ public class Post implements Serializable{
                 ", photo=" + photo +
                 ", author=" + author +
                 ", date=" + date +
-                ", location=" + location +
                 ", tags=" + tags +
                 ", comments=" + comments +
                 ", likes=" + likes +

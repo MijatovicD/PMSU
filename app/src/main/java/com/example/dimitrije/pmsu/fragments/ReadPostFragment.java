@@ -95,7 +95,7 @@ public class ReadPostFragment extends Fragment {
         description.setText(post.getDescription());
 
         TextView user = view.findViewById(R.id.user_Read);
-//        user.setText(post.getAuthor().getUsername());
+        user.setText(post.getAuthor().getUsername());
 
         TextView like = view.findViewById(R.id.countLikee);
         like.setText(Integer.toString(post.getLikes()));
@@ -103,10 +103,10 @@ public class ReadPostFragment extends Fragment {
         TextView dislike = view.findViewById(R.id.countDislikee);
         dislike.setText(String.valueOf(post.getDislikes()));
 
-     /*   final TextView tag = view.findViewById(R.id.tag_Read);
+        final TextView tag = view.findViewById(R.id.tag_Read);
 
-    tagService = ServiceUtils.tagService;
-    Call<List<Tag>> call = tagService.getTagByPost(post.getId());
+        tagService = ServiceUtils.tagService;
+        Call<List<Tag>> call = tagService.getTagByPost(post.getId());
 
         call.enqueue(new Callback<List<Tag>>() {
         @Override
@@ -124,7 +124,7 @@ public class ReadPostFragment extends Fragment {
         public void onFailure(Call<List<Tag>> call, Throwable t) {
 
         }
-    });*/
+    });
 
 
     postService = ServiceUtils.postService;

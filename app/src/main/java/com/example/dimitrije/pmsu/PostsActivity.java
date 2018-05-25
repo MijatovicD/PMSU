@@ -287,7 +287,9 @@ public class PostsActivity extends AppCompatActivity {
         }
         else if (position == 3){
             Intent ite = new Intent(this, LoginActivity.class);
+            sharedPreferences.edit().clear().commit();
             startActivity(ite);
+            finish();
         }
 
         mDrawerList.setItemChecked(position, true);

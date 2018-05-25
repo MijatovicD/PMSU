@@ -21,6 +21,7 @@ import android.widget.Toast;
 
 import com.example.dimitrije.pmsu.adapters.DrawerListAdapter;
 import com.example.dimitrije.pmsu.fragments.CommentFragment;
+import com.example.dimitrije.pmsu.fragments.MapFragment;
 import com.example.dimitrije.pmsu.fragments.ReadPostFragment;
 import com.example.dimitrije.pmsu.adapters.ViewPagerAdapter;
 
@@ -99,6 +100,7 @@ public class ReadPostActivity extends AppCompatActivity {
         ViewPagerAdapter viewPagerAdapter = new ViewPagerAdapter(getSupportFragmentManager());
         viewPagerAdapter.addFragment(new ReadPostFragment(), "Read post");
         viewPagerAdapter.addFragment(new CommentFragment(), "Comments");
+        viewPagerAdapter.addFragment(new MapFragment(), "Map");
 
         viewPager.setAdapter(viewPagerAdapter);
         tabLayout.setupWithViewPager(viewPager);
@@ -139,8 +141,6 @@ public class ReadPostActivity extends AppCompatActivity {
         }
         post = new Gson().fromJson(json, Post.class);
         postService = ServiceUtils.postService;
-
-//        userPreferences = sharedPreferences.getString(LoginActivity.Username, "");
 
         userService = ServiceUtils.userService;
 
@@ -220,7 +220,9 @@ public class ReadPostActivity extends AppCompatActivity {
             startActivity(setting);
         }  if (position == 2){
             Intent logout = new Intent(this, LoginActivity.class);
+            sharedPreferences.edit().clear().commit();
             startActivity(logout);
+            finish();
         }
 
         mDrawerListCreate.setItemChecked(position, true);
