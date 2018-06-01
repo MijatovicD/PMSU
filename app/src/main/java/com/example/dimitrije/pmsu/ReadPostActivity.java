@@ -1,5 +1,6 @@
 package com.example.dimitrije.pmsu;
 
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.support.design.widget.TabLayout;
@@ -27,6 +28,7 @@ import com.example.dimitrije.pmsu.adapters.ViewPagerAdapter;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import com.example.dimitrije.pmsu.model.NavItem;
 import com.example.dimitrije.pmsu.model.Post;
@@ -34,6 +36,7 @@ import com.example.dimitrije.pmsu.model.User;
 import com.example.dimitrije.pmsu.service.PostService;
 import com.example.dimitrije.pmsu.service.ServiceUtils;
 import com.example.dimitrije.pmsu.service.UserService;
+import com.example.dimitrije.pmsu.tools.FragmentTransition;
 import com.google.gson.Gson;
 
 import retrofit2.Call;
@@ -57,8 +60,9 @@ public class ReadPostActivity extends AppCompatActivity {
     private List<Post> posts = new ArrayList<Post>();
     private PostService postService;
     private UserService userService;
-    String userPreferences;
+    String userPrefe;
     private SharedPreferences sharedPreferences;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -144,7 +148,11 @@ public class ReadPostActivity extends AppCompatActivity {
 
         userService = ServiceUtils.userService;
 
-        Call<User> call = userService.getByUsername(userPreferences);
+        sharedPreferences = getSharedPreferences(LoginActivity.MyPres, Context.MODE_PRIVATE);
+
+        userPrefe = sharedPreferences.getString(LoginActivity.Username, "");
+
+        Call<User> call = userService.getByUsername(userPrefe);
 
         call.enqueue(new Callback<User>() {
             @Override
@@ -163,6 +171,7 @@ public class ReadPostActivity extends AppCompatActivity {
     private void prepareMenu(ArrayList<NavItem> mNavItems){
         mNavItems.add(new NavItem("Posts", "Postovi", R.drawable.ic_action_post));
         mNavItems.add(new NavItem("Settigs", "Podesavanja", R.drawable.ic_action_settings));
+        mNavItems.add(new NavItem("Location", "Map", R.drawable.ic_action_map));
         mNavItems.add(new NavItem("Logout", "Odajva", R.drawable.ic_action_logout));
     }
 
@@ -174,26 +183,32 @@ public class ReadPostActivity extends AppCompatActivity {
                 startActivity(i);
                 return true;
             case R.id.menuDelete:
-                postService = ServiceUtils.postService;
-
-                Call<Post> call = postService.deletePost(post.getId());
-
-                call.enqueue(new Callback<Post>() {
-                    @Override
-                    public void onResponse(Call<Post> call, Response<Post> response) {
-
+                    if(userPrefe.equals(post.getAuthor().getUsername())){
+                       deletePost();
+                       Toast.makeText(this, "Deleted", Toast.LENGTH_SHORT).show();
+                       Intent intent = new Intent(this, PostsActivity.class);
+                       startActivity(intent);
+                    }else{
+                        Toast.makeText(this, "You cant delete this", Toast.LENGTH_SHORT).show();
                     }
-
-                    @Override
-                    public void onFailure(Call<Post> call, Throwable t) {
-                        Toast.makeText(getApplicationContext(), t.getMessage(), Toast.LENGTH_SHORT).show();
-                    }
-                });
-
-                Toast.makeText(this, "Deleted", Toast.LENGTH_LONG).show();
-                return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    public void deletePost(){
+        Call<Post> call = postService.deletePost(post.getId());
+
+        call.enqueue(new Callback<Post>() {
+            @Override
+            public void onResponse(Call<Post> call, Response<Post> response) {
+
+            }
+
+            @Override
+            public void onFailure(Call<Post> call, Throwable t) {
+                Toast.makeText(getApplicationContext(), t.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
     @Override
@@ -215,10 +230,14 @@ public class ReadPostActivity extends AppCompatActivity {
             Intent post = new Intent(this, PostsActivity.class);
             startActivity(post);
         }
-        if (position == 1){
+        if (position == 1) {
             Intent setting = new Intent(this, SettingsActivity.class);
             startActivity(setting);
-        }  if (position == 2){
+        }
+        if (position == 2){
+            FragmentTransition.to(MapFragment.newInstance(), this, false);
+        }
+        if (position == 3){
             Intent logout = new Intent(this, LoginActivity.class);
             sharedPreferences.edit().clear().commit();
             startActivity(logout);

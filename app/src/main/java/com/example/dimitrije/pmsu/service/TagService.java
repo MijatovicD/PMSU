@@ -22,6 +22,9 @@ public interface TagService {
             "Content-Type:application/json"
     })
 
+    @GET(ServiceUtils.TAGS)
+    Call<List<Tag>> getTags();
+
     @GET(ServiceUtils.GETTAGBYPOST)
     Call<List<Tag>> getTagByPost(@Path("id") int id);
 

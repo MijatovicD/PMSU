@@ -11,10 +11,11 @@ import android.widget.TextView;
 import com.example.dimitrije.pmsu.R;
 
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 import com.example.dimitrije.pmsu.model.Post;
+
 
 /**
  * Created by Dimitrije on 4/18/2018.
@@ -49,5 +50,4 @@ public class PostAdapter extends ArrayAdapter<Post> {
 
         return convertView;
     }
-
 }

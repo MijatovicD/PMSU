@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.example.dimitrije.pmsu.LoginActivity">
+    tools:context="com.example.dimitrije.pmsu.LoginActivity"
+    android:orientation="vertical">
 
 
     <LinearLayout
@@ -41,6 +42,15 @@
             android:layout_height="wrap_content"
             android:text="Login" />
 
+
+        <TextView
+            android:id="@+id/registration"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Don't have account?"
+            android:layout_marginTop="20dp"
+            android:layout_marginLeft="100dp"/>
+
     </LinearLayout>
 
-</android.support.constraint.ConstraintLayout>
+</LinearLayout>

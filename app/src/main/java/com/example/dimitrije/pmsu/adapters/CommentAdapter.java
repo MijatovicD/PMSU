@@ -30,6 +30,11 @@ import retrofit2.Response;
 public class CommentAdapter extends ArrayAdapter<Comment> {
 
     private CommentService commentService;
+    private Comment comment;
+    private ImageButton likeButton;
+    private ImageButton dislikeButton;
+    private int likeCount;
+    private int dislikeCount;
 
     public CommentAdapter(Context context, List<Comment> comments){
         super(context,0,comments);
@@ -53,8 +58,11 @@ public class CommentAdapter extends ArrayAdapter<Comment> {
         TextView dislike_view = view.findViewById(R.id.dislikeCommentListText);
         ImageButton deleteButton = view.findViewById(R.id.deleteComment);
 
+        likeButton = view.findViewById(R.id.likeCommentList);
+        dislikeButton = view.findViewById(R.id.dislikeCommentList);
+
         title_view.setText(comment.getTitle());
-//        author_view.setText(comment.getAuthor().getUsername());
+        author_view.setText(comment.getAuthor().getUsername());
         description_view.setText(comment.getDescription());
         like_view.setText(String.valueOf(comment.getLikes()));
         dislike_view.setText(String.valueOf(comment.getDislikes()));
@@ -69,7 +77,53 @@ public class CommentAdapter extends ArrayAdapter<Comment> {
             }
         });
 
+
+        likeButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                likeCount = comment.getLikes();
+                comment.setLikes(likeCount + 1);
+
+                Call<Comment> call = commentService.likeDislike(comment, comment.getId());
+
+                call.enqueue(new Callback<Comment>() {
+                    @Override
+                    public void onResponse(Call<Comment> call, Response<Comment> response) {
+                        Toast.makeText(getContext(), "Liked", Toast.LENGTH_SHORT).show();
+                    }
+
+                    @Override
+                    public void onFailure(Call<Comment> call, Throwable t) {
+
+                    }
+                });
+            }
+        });
+
+        dislikeButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                dislikeCount = comment.getDislikes();
+                comment.setDislikes(dislikeCount + 1);
+
+                Call<Comment> call = commentService.likeDislike(comment, comment.getId());
+
+                call.enqueue(new Callback<Comment>() {
+                    @Override
+                    public void onResponse(Call<Comment> call, Response<Comment> response) {
+                        Toast.makeText(getContext(), "Disliked", Toast.LENGTH_SHORT).show();
+                    }
+
+                    @Override
+                    public void onFailure(Call<Comment> call, Throwable t) {
+
+                    }
+                });
+            }
+        });
+
         return view;
+
     }
 
     public void deleteComment(int id){
@@ -87,4 +141,5 @@ public class CommentAdapter extends ArrayAdapter<Comment> {
         });
         this.notifyDataSetChanged();
     }
+
 }

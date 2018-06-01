@@ -13,6 +13,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.Toast;
 
@@ -49,31 +50,16 @@ import retrofit2.Response;
 public class CommentFragment extends Fragment {
 
     private View view;
-
-    private Comment c1 = new Comment();
-    private Comment c2 = new Comment();
-
     private CommentService commentService;
     private UserService userService;
-
     private List<Comment> comments = new ArrayList<>();
-
-    private CommentAdapter commentAdapter;
-
-
-    private Tag t1 = new Tag();
-    private Tag t2 = new Tag();
-
     private Post post;
     private User user;
-
     private ListView listView;
-
     private SharedPreferences sharedPreferences;
     private Button addButton;
     private EditText titleEdit;
     private EditText descriptionEdit;
-
     private boolean sortCommentsByDate;
     private boolean sortCommentsByPopularity;
 
@@ -179,6 +165,7 @@ public class CommentFragment extends Fragment {
                 t.detach(CommentFragment.this).attach(CommentFragment.this).commitAllowingStateLoss();
             }
         });
+
     }
 
 
@@ -208,6 +195,7 @@ public class CommentFragment extends Fragment {
             }
         });
     }
+
 
     private void consultPreferences(){
         sortCommentsByDate = sharedPreferences.getBoolean(getString(R.string.sortCommentByDate),false);

@@ -1,11 +1,18 @@
 package com.example.dimitrije.pmsu;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.location.Address;
+import android.location.Geocoder;
 import android.location.Location;
 import android.location.LocationManager;
+import android.net.Uri;
+import android.provider.MediaStore;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -13,6 +20,7 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
+import android.util.Base64;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -21,17 +29,22 @@ import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.dimitrije.pmsu.adapters.DrawerListAdapter;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import com.example.dimitrije.pmsu.dialogs.LocationDialog;
@@ -45,6 +58,7 @@ import com.example.dimitrije.pmsu.service.PostService;
 import com.example.dimitrije.pmsu.service.ServiceUtils;
 import com.example.dimitrije.pmsu.service.TagService;
 import com.example.dimitrije.pmsu.service.UserService;
+import com.example.dimitrije.pmsu.tools.FragmentTransition;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -74,10 +88,13 @@ public class CreatePostsActivity extends AppCompatActivity {
     private static User user;
     private Comment comment = new Comment();
     private static Tag tag;
+    private static Tag tagBody;
     private SharedPreferences sharedPreferences;
     private SharedPreferences map;
     private UserService userService;
     private AlertDialog dialog;
+    private Bitmap bitmap;
+    private TextView locationText;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -103,6 +120,8 @@ public class CreatePostsActivity extends AppCompatActivity {
         titleText = findViewById(R.id.titleCreate);
         descriptionText = findViewById(R.id.descriptionCreate);
         tagText = findViewById(R.id.tagCreate);
+        locationText = findViewById(R.id.longitude);
+
         btnPhoto = findViewById(R.id.photoCreate);
         btnPhoto.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -140,12 +159,10 @@ public class CreatePostsActivity extends AppCompatActivity {
 
         postService = ServiceUtils.postService;
         userService = ServiceUtils.userService;
+        tagService = ServiceUtils.tagService;
 
         sharedPreferences = getSharedPreferences(LoginActivity.MyPres, Context.MODE_PRIVATE);
         map = getSharedPreferences(MapFragment.Prefe, Context.MODE_PRIVATE);
-        if (sharedPreferences.contains(LoginActivity.Username)) {
-
-        }
 
         String userPref = sharedPreferences.getString(LoginActivity.Username, "");
         System.out.println("fJLKFSKLJSFSDFJKLFWKJL" + userPref);
@@ -168,6 +185,7 @@ public class CreatePostsActivity extends AppCompatActivity {
     private void prepareMenu(ArrayList<NavItem> mNavItems) {
         mNavItems.add(new NavItem("Posts", "Postovi", R.drawable.ic_action_post));
         mNavItems.add(new NavItem("Settigs", "Podesavanja", R.drawable.ic_action_settings));
+        mNavItems.add(new NavItem("Location", "Map", R.drawable.ic_action_map));
         mNavItems.add(new NavItem("Logout", "Odjava", R.drawable.ic_action_logout));
     }
 
@@ -179,7 +197,10 @@ public class CreatePostsActivity extends AppCompatActivity {
                 startActivity(i);
                 return true;
             case R.id.shareMenu:
-                addPost();
+                    addPost();
+                    Intent intent = new Intent(this, PostsActivity.class);
+                    startActivity(intent);
+                    finish();
         }
         return super.onOptionsItemSelected(item);
     }
@@ -196,26 +217,20 @@ public class CreatePostsActivity extends AppCompatActivity {
         post.setAuthor(user);
         post.setLikes(0);
         post.setDislikes(0);
-        Date date = Calendar.getInstance().getTime();
+        Date date = new Date();
         post.setDate(date);
-/*
-        Location location = new Location(post.getLocation());
-        post.setLatitude(location.getLatitude());
-        post.setLongitude(location.getLongitude());
-*/
 
-        Float longitude = map.getFloat(MapFragment.Longitude, 0);
         Float latitude = map.getFloat(MapFragment.Latitude, 0);
-        post.setLongitude(longitude);
+        Float longitude = map.getFloat(MapFragment.Longitude, 0);
         post.setLatitude(latitude);
+        post.setLongitude(longitude);
 
         Call<Post> call = postService.addPost(post);
-
         call.enqueue(new Callback<Post>() {
             @Override
             public void onResponse(Call<Post> call, Response<Post> response) {
                 postBody = response.body();
-
+                map.edit().clear().commit();
             }
 
             @Override
@@ -254,20 +269,22 @@ public class CreatePostsActivity extends AppCompatActivity {
 
 
     public void addTag(){
-        tagService = ServiceUtils.tagService;
         String tagString = tagText.getText().toString().trim();
         String[] separator = tagString.split("#");
 
         List<String> tagFilter = Arrays.asList(separator);
         tag = new Tag();
-        for (String tagSttring : tagFilter.subList(1, tagFilter.size())){
+        for (String tagStrings : tagFilter.subList(1, tagFilter.size())){
             tag.setName(tagString);
 
             Call<Tag> call = tagService.addTag(tag);
             call.enqueue(new Callback<Tag>() {
                 @Override
                 public void onResponse(Call<Tag> call, Response<Tag> response) {
-                    tag = response.body();
+                    tagBody = response.body();
+                    System.out.println("POST" + postBody.getId());
+                    addTagInPost(postBody.getId(), tagBody.getId());
+
                 }
 
                 @Override
@@ -278,6 +295,49 @@ public class CreatePostsActivity extends AppCompatActivity {
         }
     }
 
+
+    public void addImage(){
+        Bitmap bitmap = BitmapFactory.decodeResource(getResources(),R.id.imageContainer);
+        ByteArrayOutputStream stream = new ByteArrayOutputStream();
+        bitmap.compress(Bitmap.CompressFormat.PNG, 90, stream); //compress to which format you want.
+        byte [] byte_arr = stream.toByteArray();
+        String image_str = Base64.encodeToString(byte_arr, Base64.DEFAULT);
+    }
+
+    public void addTagInPost(int postId, int tagId){
+        Call<Post> call = postService.addTagInPost(postId, tagId);
+
+        call.enqueue(new Callback<Post>() {
+            @Override
+            public void onResponse(Call<Post> call, Response<Post> response) {
+
+            }
+
+            @Override
+            public void onFailure(Call<Post> call, Throwable t) {
+
+            }
+        });
+    }
+
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if(requestCode == 1 && resultCode == Activity.RESULT_OK){
+            Uri image = data.getData();
+            bitmap = null;
+            try {
+                bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), image);
+                ImageView view = findViewById(R.id.imageContainer);
+                view.setImageBitmap(bitmap);
+            }catch (IOException e){
+                e.printStackTrace();
+            }
+        }
+    }
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
@@ -285,7 +345,7 @@ public class CreatePostsActivity extends AppCompatActivity {
         return super.onCreateOptionsMenu(menu);
     }
 
-    private class DrawerItemClickListenerCreate implements ListView.OnItemClickListener{
+        private class DrawerItemClickListenerCreate implements ListView.OnItemClickListener{
         @Override
         public void onItemClick(AdapterView<?> parent, View view, int position, long id){
             selectItemFromDrawerCreate(position);
@@ -303,6 +363,9 @@ public class CreatePostsActivity extends AppCompatActivity {
             startActivity(setting);
         }
         if (position == 2){
+            FragmentTransition.to(MapFragment.newInstance(), this, false);
+        }
+        if (position == 3){
             Intent logout = new Intent(this, LoginActivity.class);
             sharedPreferences.edit().clear().commit();
             startActivity(logout);
@@ -336,7 +399,6 @@ public class CreatePostsActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        showLocationDialog();
     }
 
     @Override

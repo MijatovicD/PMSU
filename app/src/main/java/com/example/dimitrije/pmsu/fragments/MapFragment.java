@@ -1,6 +1,8 @@
 package com.example.dimitrije.pmsu.fragments;
 
 import android.content.SharedPreferences;
+import android.location.Address;
+import android.location.Geocoder;
 import android.support.v4.app.Fragment;
 import android.location.LocationListener;
 
@@ -30,6 +32,8 @@ import android.support.v7.app.AlertDialog;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -43,6 +47,10 @@ import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+
+import java.io.IOException;
+import java.util.List;
+import java.util.Locale;
 
 
 /**
@@ -79,7 +87,6 @@ public class MapFragment extends Fragment implements LocationListener, OnMapRead
         locationManager = (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
 
         sharedPreferences = this.getActivity().getSharedPreferences(Prefe, Context.MODE_PRIVATE);
-
 
     }
 
@@ -353,11 +360,6 @@ public class MapFragment extends Fragment implements LocationListener, OnMapRead
         editor.putFloat(Latitude,Double.doubleToLongBits(location.getLatitude()));
         editor.putFloat(Longitude,Double.doubleToLongBits(location.getLongitude()));
 
-        Float nesto = sharedPreferences.getFloat(MapFragment.Latitude, 0 );
-
-        System.out.println("LOKACIIIIIIIIIIIIIIIIIJAAAA" + nesto);
-
-
         editor.commit();
 
         if (home != null) {
@@ -380,6 +382,7 @@ public class MapFragment extends Fragment implements LocationListener, OnMapRead
      *
      * Rad sa lokacja izuzetno trosi bateriju.Obavezno osloboditi kada vise ne koristmo
      * */
+
     @Override
     public void onPause() {
         super.onPause();

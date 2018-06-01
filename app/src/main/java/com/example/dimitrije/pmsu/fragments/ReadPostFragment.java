@@ -103,6 +103,12 @@ public class ReadPostFragment extends Fragment {
         TextView dislike = view.findViewById(R.id.countDislikee);
         dislike.setText(String.valueOf(post.getDislikes()));
 
+        TextView latitude = view.findViewById(R.id.latitude);
+        latitude.setText(Double.toString(post.getLatitude()));
+
+        TextView longitude = view.findViewById(R.id.longitude);
+        longitude.setText(Double.toString(post.getLongitude()));
+
         final TextView tag = view.findViewById(R.id.tag_Read);
 
         tagService = ServiceUtils.tagService;
@@ -115,7 +121,7 @@ public class ReadPostFragment extends Fragment {
             tags = response.body();
 
             for(Tag t : tags){
-                tag.setText("#" + t.getName());
+                tag.setText(t.getName());
             }
 
         }
@@ -149,7 +155,7 @@ public class ReadPostFragment extends Fragment {
 
                 @Override
                 public void onFailure(Call<Post> call, Throwable t) {
-
+                    Toast.makeText(getContext(), "Greska", Toast.LENGTH_SHORT).show();
                 }
             });
 

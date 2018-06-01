@@ -11,6 +11,7 @@ import retrofit2.http.DELETE;
 import retrofit2.http.GET;
 import retrofit2.http.Headers;
 import retrofit2.http.POST;
+import retrofit2.http.PUT;
 import retrofit2.http.Path;
 
 /**
@@ -32,4 +33,7 @@ public interface CommentService {
 
     @DELETE(ServiceUtils.DELETECOMMENT)
     Call<Comment> deleteComment(@Path("id") Integer id);
+
+    @PUT(ServiceUtils.LIKEDISLIKECOMMENT)
+    Call<Comment> likeDislike(@Body Comment comment, @Path("id") int id);
 }

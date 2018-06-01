@@ -13,19 +13,19 @@ public class SettingsActivity extends PreferenceActivity {
 
         CheckBoxPreference cbDate = (CheckBoxPreference) findPreference(getString(R.string.sortPostByDate));
         CheckBoxPreference cbPopularity = (CheckBoxPreference) findPreference(getString(R.string.sortPostByPopularity));
-        if (cbDate.isChecked() & cbDate.isEnabled()){
+        if (cbDate.isChecked() && cbDate.isEnabled()){
             cbPopularity.setEnabled(false);
         }
-        else if (cbPopularity.isChecked() & cbPopularity.isEnabled()){
+        else if (cbPopularity.isChecked() && cbPopularity.isEnabled()){
             cbDate.setEnabled(false);
         }
 
         CheckBoxPreference cbComDate = (CheckBoxPreference) findPreference(getString(R.string.sortCommentByDate));
         CheckBoxPreference cbComPop = (CheckBoxPreference) findPreference(getString(R.string.sortCommentByPopularity));
-        if (cbComDate.isChecked() & cbComDate.isEnabled()){
+        if (cbComDate.isChecked() && cbComDate.isEnabled()){
             cbComPop.setEnabled(false);
         }
-        else if (cbComPop.isChecked() & cbComPop.isEnabled()){
+        else if (cbComPop.isChecked() && cbComPop.isEnabled()){
             cbComDate.setEnabled(false);
         }
     }

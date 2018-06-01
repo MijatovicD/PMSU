@@ -9,6 +9,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.dimitrije.pmsu.model.User;
@@ -23,6 +24,7 @@ public class LoginActivity extends AppCompatActivity {
 
     private EditText editUsername;
     private EditText editPassword;
+    private TextView registration;
     private Button loginBtn;
     private SharedPreferences sharedPreferences;
     private UserService userService;
@@ -37,11 +39,11 @@ public class LoginActivity extends AppCompatActivity {
 
         editUsername = findViewById(R.id.username);
         editPassword = findViewById(R.id.password);
+        registration = findViewById(R.id.registration);
         loginBtn = findViewById(R.id.loginbtn);
         userService = ServiceUtils.userService;
 
         sharedPreferences = getSharedPreferences(MyPres, Context.MODE_PRIVATE);
-        String userNamePreferences = sharedPreferences.getString(Username, "");
 
             loginBtn.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -50,25 +52,31 @@ public class LoginActivity extends AppCompatActivity {
                     String password = editPassword.getText().toString();
 
                     SharedPreferences.Editor editor = sharedPreferences.edit();
-
-
-                        editor.putString(Username, username);
-                        editor.commit();
-                        doLogin(username, password);
-
+                        if(validate(username, password)){
+                            editor.putString(Username, username);
+                            editor.commit();
+                            doLogin(username, password);
+                        }
                 }
-
             });
 
+
+            registration.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Intent intent = new Intent(LoginActivity.this, RegistrationActivity.class);
+                    startActivity(intent);
+                }
+            });
     }
 
     public boolean validate(String username, String password){
         if(username == null || username.trim().length() == 0){
-            Toast.makeText(this, "Pogresan username", Toast.LENGTH_SHORT);
+            Toast.makeText(this, "Pogresan username", Toast.LENGTH_SHORT).show();
             return false;
         }
         if(password == null || password.trim().length() == 0){
-            Toast.makeText(this, "Pogresan passsword", Toast.LENGTH_SHORT);
+            Toast.makeText(this, "Pogresan passsword", Toast.LENGTH_SHORT).show();
             return false;
         }
         return true;
@@ -81,11 +89,12 @@ public class LoginActivity extends AppCompatActivity {
             public void onResponse(Call<User> call, Response<User> response) {
                 User user = response.body();
 
-                SharedPreferences.Editor editor = sharedPreferences.edit();
-                editor.putString(Name, user.getName());
-                editor.commit();
 
                 if(username.equals(user.getUsername()) && password.equals(user.getPassword())){
+
+                    SharedPreferences.Editor editor = sharedPreferences.edit();
+                    editor.putString(Name, user.getName());
+                    editor.commit();
 
                     Intent intent = new Intent(LoginActivity.this, PostsActivity.class);
                     startActivity(intent);
@@ -96,7 +105,7 @@ public class LoginActivity extends AppCompatActivity {
 
             @Override
             public void onFailure(Call<User> call, Throwable t) {
-
+                Toast.makeText(getApplicationContext(), "Greska", Toast.LENGTH_SHORT).show();
             }
         });
     }

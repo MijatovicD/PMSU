@@ -32,6 +32,11 @@ public class ServiceUtils {
     public static final String ADDCOMMENT = "comments/add";
     public static final String DELETECOMMENT = "comments/delete/{id}";
     public static final String LIKEDISLIKEPOST = "posts/update/{id}";
+    public static final String LIKEDISLIKECOMMENT = "comments/update/{id}";
+    public static final String ADDTAGINPOST = "posts/addTag/{postId}/{tagId}";
+    public static final String ADDUSER = "users/add";
+    public static final String TAGS = "tags/all";
+    public static final String UPDATEUSER = "users/update/{id}";
 
     public static OkHttpClient test(){
         HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();

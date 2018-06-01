@@ -10,6 +10,7 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -19,11 +20,16 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
+import android.widget.SearchView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.dimitrije.pmsu.adapters.DrawerListAdapter;
 import com.example.dimitrije.pmsu.adapters.PostAdapter;
+import com.example.dimitrije.pmsu.model.Tag;
+import com.example.dimitrije.pmsu.service.TagService;
+import com.example.dimitrije.pmsu.service.UserService;
+import com.example.dimitrije.pmsu.tools.FragmentTransition;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -33,6 +39,7 @@ import java.util.Date;
 import java.util.List;
 
 
+import com.example.dimitrije.pmsu.fragments.MapFragment;
 import com.example.dimitrije.pmsu.model.NavItem;
 import com.example.dimitrije.pmsu.model.Post;
 import com.example.dimitrije.pmsu.model.User;
@@ -43,8 +50,6 @@ import com.google.gson.Gson;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
-import retrofit2.Retrofit;
-import retrofit2.converter.gson.GsonConverterFactory;
 
 public class PostsActivity extends AppCompatActivity {
     private DrawerLayout mDrawerLayout;
@@ -55,16 +60,20 @@ public class PostsActivity extends AppCompatActivity {
     private CharSequence mTitle;
     private ArrayList<NavItem> mNavItem = new ArrayList<>();
     private List<Post> posts = new ArrayList<>();
+    private List<Tag> tags = new ArrayList<>();
     private SharedPreferences sharedPreferences;
     private boolean sortPostByDate;
     private boolean sortPostByPopularity;
     private PostService postService;
+    private UserService userService;
+    private TagService tagService;
     private PostAdapter postAdapter;
 
     private ListView listView;
 
     private Post post = new Post();
     private Post post1 = new Post();
+    private Tag tag = new Tag();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -123,6 +132,8 @@ public class PostsActivity extends AppCompatActivity {
 
 
         postService = ServiceUtils.postService;
+        userService = ServiceUtils.userService;
+        tagService = ServiceUtils.tagService;
         Call call = postService.getPosts();
 
         call.enqueue(new Callback<List<Post>>() {
@@ -140,6 +151,27 @@ public class PostsActivity extends AppCompatActivity {
                 Toast.makeText(getApplicationContext(), t.getMessage(), Toast.LENGTH_SHORT).show();
             }
         });
+
+
+        Call callTags = tagService.getTags();
+
+        callTags.enqueue(new Callback<List<Tag>>() {
+            @Override
+            public void onResponse(Call<List<Tag>> call, Response<List<Tag>> response) {
+
+                if(response.isSuccessful()){
+                    tags = response.body();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<List<Tag>> call, Throwable t) {
+                Toast.makeText(getApplicationContext(), t.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
+
+
+
 /*
         post.setTitle("Mark Zucerberg prodao Facebook");
         post.setDate(new Date(2018-1900, 04-01, 23));
@@ -240,6 +272,8 @@ public class PostsActivity extends AppCompatActivity {
         mNavItems.add(new NavItem("Posts", "Postovi", R.drawable.ic_action_post));
         mNavItems.add(new NavItem("Settigs", "Podesavanja", R.drawable.ic_action_settings));
         mNavItems.add(new NavItem("Create post", "Kreiraj post", R.drawable.ic_action_add));
+        mNavItems.add(new NavItem("Location", "Map", R.drawable.ic_action_map));
+        mNavItems.add(new NavItem("Edit user", "Izmeni", R.drawable.ic_action_edit));
         mNavItems.add(new NavItem("Log out", "Odjava", R.drawable.ic_action_logout));
     }
 
@@ -262,9 +296,56 @@ public class PostsActivity extends AppCompatActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.menu_post, menu);
-        return super.onCreateOptionsMenu(menu);
-    }
+        MenuItem item = menu.findItem(R.id.menuSearch);
+        SearchView searchView = (SearchView) item.getActionView();
 
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String s) {
+             /*   ArrayList<Post> postList = new ArrayList<>();
+
+                for (Post p : posts){
+                    if (p.getAuthor().getUsername().contains(s.toLowerCase())){
+                        postList.add(p);
+                    }
+                }
+
+                PostAdapter postAdapter = new PostAdapter(PostsActivity.this, postList);
+                listView.setAdapter(postAdapter);
+*/
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String s) {
+              /*List<Post> postList = new ArrayList<>();
+
+
+               for (Tag t : tags){
+                   if (t.getName().contains(s.toLowerCase())){
+                       t.getPosts().addAll(postList);
+                   }
+               }
+
+               PostAdapter postAdapter = new PostAdapter(PostsActivity.this, postList);
+               listView.setAdapter(postAdapter);*/
+                ArrayList<Post> postList = new ArrayList<>();
+
+                for (Post p : posts){
+                    if (p.getAuthor().getUsername().contains(s.toLowerCase())){
+                        postList.add(p);
+                    }
+                }
+
+                PostAdapter postAdapter = new PostAdapter(PostsActivity.this, postList);
+                listView.setAdapter(postAdapter);
+
+
+             return true;
+            }
+        });
+        return true;
+    }
 
     private class DrawerItemClickListener implements ListView.OnItemClickListener{
         @Override
@@ -286,6 +367,13 @@ public class PostsActivity extends AppCompatActivity {
             startActivity(i);
         }
         else if (position == 3){
+            FragmentTransition.to(MapFragment.newInstance(), this, false);
+        }
+        else if (position == 4){
+            Intent edit = new Intent(this, EditUserActivity.class);
+            startActivity(edit);
+        }
+        else if (position == 5){
             Intent ite = new Intent(this, LoginActivity.class);
             sharedPreferences.edit().clear().commit();
             startActivity(ite);

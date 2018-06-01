@@ -41,6 +41,9 @@ public interface PostService {
     @PUT(ServiceUtils.LIKEDISLIKEPOST)
     Call<Post> likeDislike(@Body Post post, @Path("id") int id);
 
+    @PUT(ServiceUtils.ADDTAGINPOST)
+    Call<Post> addTagInPost(@Path("postId") int postId, @Path("tagId") int tagId);
+
     @DELETE(ServiceUtils.POSTDELETE)
     Call<Post> deletePost(@Path("id") int id);
 

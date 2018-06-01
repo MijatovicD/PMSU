@@ -48,7 +48,7 @@ public class Post implements Serializable{
     @Expose
     private float latitude;
 
-    @SerializedName("tag")
+    @SerializedName("tags")
     @Expose
     private List<Tag> tags;
 

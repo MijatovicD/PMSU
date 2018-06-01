@@ -61,7 +61,7 @@
                         android:layout_marginTop="10dp" />
 
                     <ImageButton
-                        android:id="@+id/dislike_comment_image"
+                        android:id="@+id/dislikeCommentList"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:src="@drawable/ic_action_dislike"
@@ -73,7 +73,7 @@
                         android:id="@+id/dislikeCommentListText"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_toRightOf="@id/dislike_comment_image"
+                        android:layout_toRightOf="@id/dislikeCommentList"
                         android:layout_below="@id/descriptionComment"
                         android:layout_marginLeft="10dp"
                         android:layout_marginTop="10dp"
