@@ -6,13 +6,20 @@ import android.content.SharedPreferences;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ListView;
 import android.widget.Toast;
 
+import com.example.dimitrije.pmsu.adapters.EditUserAdapter;
 import com.example.dimitrije.pmsu.model.User;
 import com.example.dimitrije.pmsu.service.ServiceUtils;
 import com.example.dimitrije.pmsu.service.UserService;
+import com.google.gson.Gson;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -25,8 +32,10 @@ public class EditUserActivity extends AppCompatActivity {
     private EditText passwordText;
     private Button button;
     private User user = new User();
+    private List<User> users = new ArrayList<>();
     private UserService userService;
     private SharedPreferences sharedPreferences;
+    private ListView listView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,56 +43,45 @@ public class EditUserActivity extends AppCompatActivity {
         setContentView(R.layout.activity_edit_user);
 
 
-        nameText = findViewById(R.id.nameEdit);
-        usernameText = findViewById(R.id.usernameEdit);
-        passwordText = findViewById(R.id.passwordEdit);
-        button = findViewById(R.id.btnEdit);
-
+        listView = findViewById(R.id.userEditList);
 
         sharedPreferences = getSharedPreferences(LoginActivity.MyPres, Context.MODE_PRIVATE);
 
         userService = ServiceUtils.userService;
-        String userPref =  sharedPreferences.getString(LoginActivity.Username, "");
 
-        Call<User> call = userService.getByUsername(userPref);
+        Call callUsers = userService.getUsers();
 
-        call.enqueue(new Callback<User>() {
+        callUsers.enqueue(new Callback<List<User>>() {
             @Override
-            public void onResponse(Call<User> call, Response<User> response) {
-                user = response.body();
+            public void onResponse(Call<List<User>> call, Response<List<User>> response) {
+                users = response.body();
 
-                nameText.setText(user.getName());
-                usernameText.setText(user.getUsername());
-                passwordText.setText(user.getPassword());
+                EditUserAdapter adapter = new EditUserAdapter(EditUserActivity.this, users);
+
+                listView.setAdapter(adapter);
             }
 
             @Override
-            public void onFailure(Call<User> call, Throwable t) {
-                Toast.makeText(EditUserActivity.this, "Greska", Toast.LENGTH_SHORT).show();
+            public void onFailure(Call<List<User>> call, Throwable t) {
+
             }
         });
 
-
-        button.setOnClickListener(new View.OnClickListener() {
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
-            public void onClick(View view) {
-                Call<User> call = userService.updateUser(user, user.getId());
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+
+                user = users.get(i);
+
+                userService = ServiceUtils.userService;
+
+                Call<User> call = userService.getByUsername(user.getUsername());
 
                 call.enqueue(new Callback<User>() {
                     @Override
                     public void onResponse(Call<User> call, Response<User> response) {
-
-                        String nameUser = nameText.getText().toString();
-                        String userNameUser = usernameText.getText().toString();
-                        String passwordUser = passwordText.getText().toString();
-
-                        user.setName(nameUser);
-                        user.setUsername(userNameUser);
-                        user.setPassword(passwordUser);
-
-                        Toast.makeText(EditUserActivity.this, "Updated user", Toast.LENGTH_SHORT).show();
-                        Intent intent = new Intent(EditUserActivity.this, PostsActivity.class);
-                        finish();
+                        Intent intent = new Intent(EditUserActivity.this, EditUsersActivity.class);
+                        intent.putExtra("User", new Gson().toJson(user));
                         startActivity(intent);
                     }
 
@@ -94,6 +92,5 @@ public class EditUserActivity extends AppCompatActivity {
                 });
             }
         });
-
     }
 }

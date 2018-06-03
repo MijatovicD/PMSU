@@ -9,11 +9,15 @@
         android:icon="@drawable/ic_action_settings">
     </item>
     <item
+        android:id="@+id/menuEdit"
+        app:showAsAction="always"
+        android:title="Edit"
+        android:icon="@drawable/ic_action_edit">
+    </item>
+    <item
         android:id="@+id/menuDelete"
-        app:showAsAction="ifRoom"
+        app:showAsAction="always"
         android:title="Delete post"
         android:icon="@drawable/ic_action_delete">
     </item>
-
-
 </menu>

@@ -45,29 +45,29 @@ public class LoginActivity extends AppCompatActivity {
 
         sharedPreferences = getSharedPreferences(MyPres, Context.MODE_PRIVATE);
 
-            loginBtn.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    String username = editUsername.getText().toString();
-                    String password = editPassword.getText().toString();
+        loginBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                String username = editUsername.getText().toString();
+                String password = editPassword.getText().toString();
 
-                    SharedPreferences.Editor editor = sharedPreferences.edit();
-                        if(validate(username, password)){
-                            editor.putString(Username, username);
-                            editor.commit();
-                            doLogin(username, password);
-                        }
+                SharedPreferences.Editor editor = sharedPreferences.edit();
+                if(validate(username, password)){
+                    editor.putString(Username, username);
+                    editor.commit();
+                    doLogin(username, password);
                 }
-            });
+            }
+        });
 
 
-            registration.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    Intent intent = new Intent(LoginActivity.this, RegistrationActivity.class);
-                    startActivity(intent);
-                }
-            });
+        registration.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(LoginActivity.this, RegistrationActivity.class);
+                startActivity(intent);
+            }
+        });
     }
 
     public boolean validate(String username, String password){

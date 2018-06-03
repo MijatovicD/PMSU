@@ -1,6 +1,9 @@
 package com.example.dimitrije.pmsu.adapters;
 
 import android.content.Context;
+import android.content.Intent;
+import android.content.SharedPreferences;
+import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -9,6 +12,8 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.dimitrije.pmsu.EditCommentActivity;
+import com.example.dimitrije.pmsu.LoginActivity;
 import com.example.dimitrije.pmsu.R;
 
 import com.example.dimitrije.pmsu.model.Comment;
@@ -33,8 +38,11 @@ public class CommentAdapter extends ArrayAdapter<Comment> {
     private Comment comment;
     private ImageButton likeButton;
     private ImageButton dislikeButton;
+    private ImageButton editButton;
     private int likeCount;
     private int dislikeCount;
+    private SharedPreferences sharedPreferences;
+    public static final String MyPreferences = "Prefs";
 
     public CommentAdapter(Context context, List<Comment> comments){
         super(context,0,comments);
@@ -60,6 +68,7 @@ public class CommentAdapter extends ArrayAdapter<Comment> {
 
         likeButton = view.findViewById(R.id.likeCommentList);
         dislikeButton = view.findViewById(R.id.dislikeCommentList);
+        editButton = view.findViewById(R.id.editComment);
 
         title_view.setText(comment.getTitle());
         author_view.setText(comment.getAuthor().getUsername());
@@ -69,6 +78,7 @@ public class CommentAdapter extends ArrayAdapter<Comment> {
 
         commentService = ServiceUtils.commentService;
 
+        sharedPreferences = getContext().getSharedPreferences(MyPreferences, Context.MODE_PRIVATE);
         deleteButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -119,6 +129,18 @@ public class CommentAdapter extends ArrayAdapter<Comment> {
 
                     }
                 });
+            }
+        });
+
+        editButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+               SharedPreferences.Editor editor = sharedPreferences.edit();
+
+               editor.putInt("Comment", comment.getId());
+               editor.commit();
+               getContext().startActivity(new Intent(getContext(), EditCommentActivity.class));
+               editor.clear();
             }
         });
 

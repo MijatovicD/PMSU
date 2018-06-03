@@ -35,6 +35,9 @@ public class User implements Serializable {
     @SerializedName("comments")
     @Expose
     private List<Comment> comments;
+    @SerializedName("role")
+    @Expose
+    private Role role;
 
     public int getId() {
         return id;
@@ -92,6 +95,14 @@ public class User implements Serializable {
         this.comments = comments;
     }
 
+    public Role getRole() {
+        return role;
+    }
+
+    public void setRole(Role role) {
+        this.role = role;
+    }
+
     @Override
     public String toString() {
         return "User{" +
@@ -102,6 +113,7 @@ public class User implements Serializable {
                 ", password='" + password + '\'' +
                 ", posts=" + posts +
                 ", comments=" + comments +
+                ", role=" + role +
                 '}';
     }
 }

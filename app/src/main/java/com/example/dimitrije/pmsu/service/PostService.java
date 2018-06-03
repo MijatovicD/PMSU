@@ -44,6 +44,15 @@ public interface PostService {
     @PUT(ServiceUtils.ADDTAGINPOST)
     Call<Post> addTagInPost(@Path("postId") int postId, @Path("tagId") int tagId);
 
+    @GET(ServiceUtils.SORTPOST)
+    Call<List<Post>> sortPosts();
+
+    @GET(ServiceUtils.SORTPOSTBYLIKE)
+    Call<List<Post>> sortPostsByLike();
+
+    @PUT(ServiceUtils.UPDATEPOST)
+    Call<Post> updatePost(@Body Post post, @Path("id") int id);
+
     @DELETE(ServiceUtils.POSTDELETE)
     Call<Post> deletePost(@Path("id") int id);
 

@@ -86,6 +86,15 @@
                         android:layout_marginTop="120dp"
                         android:src="@drawable/ic_action_delete"
                         android:background="@null"/>
+
+                    <ImageButton
+                        android:id="@+id/editComment"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="290dp"
+                        android:layout_marginTop="120dp"
+                        android:src="@drawable/ic_action_edit"
+                        android:background="@null"/>
                 </RelativeLayout>
 
     </ScrollView>

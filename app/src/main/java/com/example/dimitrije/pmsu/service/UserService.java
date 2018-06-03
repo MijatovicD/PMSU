@@ -2,6 +2,8 @@ package com.example.dimitrije.pmsu.service;
 
 import com.example.dimitrije.pmsu.model.User;
 
+import java.util.List;
+
 import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.GET;
@@ -26,6 +28,9 @@ public interface UserService {
 
     @GET(ServiceUtils.USERNAME)
     Call<User> getByUsername(@Path("username") String username);
+
+    @GET(ServiceUtils.USERS)
+    Call<List<User>> getUsers();
 
     @POST(ServiceUtils.ADDUSER)
     Call<User> addUser(@Body User user);

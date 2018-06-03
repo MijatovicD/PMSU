@@ -87,8 +87,8 @@ public class CreatePostsActivity extends AppCompatActivity {
     private ImageButton btnPhoto;
     private static User user;
     private Comment comment = new Comment();
-    private static Tag tag;
-    private static Tag tagBody;
+    private static Tag tag = new Tag();
+    private static Tag tagBody = new Tag();
     private SharedPreferences sharedPreferences;
     private SharedPreferences map;
     private UserService userService;
@@ -230,7 +230,7 @@ public class CreatePostsActivity extends AppCompatActivity {
             @Override
             public void onResponse(Call<Post> call, Response<Post> response) {
                 postBody = response.body();
-                map.edit().clear().commit();
+                addTag();
             }
 
             @Override
@@ -239,7 +239,6 @@ public class CreatePostsActivity extends AppCompatActivity {
             }
         });
 
-        addTag();
     }
 
 
@@ -273,18 +272,15 @@ public class CreatePostsActivity extends AppCompatActivity {
         String[] separator = tagString.split("#");
 
         List<String> tagFilter = Arrays.asList(separator);
-        tag = new Tag();
         for (String tagStrings : tagFilter.subList(1, tagFilter.size())){
-            tag.setName(tagString);
+            tag.setName("#" + tagString);
 
             Call<Tag> call = tagService.addTag(tag);
             call.enqueue(new Callback<Tag>() {
                 @Override
                 public void onResponse(Call<Tag> call, Response<Tag> response) {
                     tagBody = response.body();
-                    System.out.println("POST" + postBody.getId());
                     addTagInPost(postBody.getId(), tagBody.getId());
-
                 }
 
                 @Override
@@ -305,11 +301,12 @@ public class CreatePostsActivity extends AppCompatActivity {
     }
 
     public void addTagInPost(int postId, int tagId){
-        Call<Post> call = postService.addTagInPost(postId, tagId);
+        Call<Post> call = postService.addTagInPost(postBody.getId(), tagBody.getId());
 
         call.enqueue(new Callback<Post>() {
             @Override
             public void onResponse(Call<Post> call, Response<Post> response) {
+
 
             }
 

@@ -28,6 +28,9 @@ public interface CommentService {
     @GET(ServiceUtils.COMMENTBYID)
     Call<List<Comment>> getCommentPost(@Path("id") int id);
 
+    @GET(ServiceUtils.COMMENTID)
+    Call<Comment> getCommentId(@Path("id") int id);
+
     @POST(ServiceUtils.ADDCOMMENT)
     Call<Comment> addComment(@Body Comment comment);
 
@@ -36,4 +39,7 @@ public interface CommentService {
 
     @PUT(ServiceUtils.LIKEDISLIKECOMMENT)
     Call<Comment> likeDislike(@Body Comment comment, @Path("id") int id);
+
+    @PUT(ServiceUtils.UPDATECOMMENT)
+    Call<Comment> updateComment(@Body Comment comment, @Path("id") int id);
 }

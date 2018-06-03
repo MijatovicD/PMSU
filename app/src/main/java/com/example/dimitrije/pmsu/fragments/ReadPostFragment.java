@@ -1,18 +1,26 @@
 package com.example.dimitrije.pmsu.fragments;
 
+import android.content.Context;
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.dimitrije.pmsu.EditPostActivity;
+import com.example.dimitrije.pmsu.LoginActivity;
+import com.example.dimitrije.pmsu.PostsActivity;
 import com.example.dimitrije.pmsu.R;
+import com.example.dimitrije.pmsu.ReadPostActivity;
 import com.example.dimitrije.pmsu.model.Post;
 import com.example.dimitrije.pmsu.model.Tag;
 import com.example.dimitrije.pmsu.service.PostService;
@@ -37,6 +45,7 @@ public class ReadPostFragment extends Fragment {
 
     private View view;
     private Post post;
+    private Post post1;
     private TagService tagService;
     private List<Tag> tags;
     private ImageButton likeButton;
@@ -73,7 +82,6 @@ public class ReadPostFragment extends Fragment {
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-
         String json = null;
         Bundle extras = getActivity().getIntent().getExtras();
         if (extras != null){
@@ -82,7 +90,6 @@ public class ReadPostFragment extends Fragment {
         post = new Gson().fromJson(json, Post.class);
 
         post.getId();
-
 
         TextView title = view.findViewById(R.id.title_Read);
         title.setText(post.getTitle());
@@ -132,9 +139,7 @@ public class ReadPostFragment extends Fragment {
         }
     });
 
-
     postService = ServiceUtils.postService;
-
     likeButton = view.findViewById(R.id.like_Read);
     dislikeButton = view.findViewById(R.id.dislike_Read);
 

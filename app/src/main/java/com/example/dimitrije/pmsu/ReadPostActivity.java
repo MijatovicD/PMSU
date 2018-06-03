@@ -146,6 +146,7 @@ public class ReadPostActivity extends AppCompatActivity {
         post = new Gson().fromJson(json, Post.class);
         postService = ServiceUtils.postService;
 
+
         userService = ServiceUtils.userService;
 
         sharedPreferences = getSharedPreferences(LoginActivity.MyPres, Context.MODE_PRIVATE);
@@ -191,6 +192,37 @@ public class ReadPostActivity extends AppCompatActivity {
                     }else{
                         Toast.makeText(this, "You cant delete this", Toast.LENGTH_SHORT).show();
                     }
+                    return true;
+            case R.id.menuEdit:
+
+                if(userPrefe.equals(post.getAuthor().getUsername())){
+                    Call<Post> postCall = postService.getPost(post.getId());
+
+                    System.out.println("POOOOOOOOOOOOOOOOOOOOOOOOOST" + post.getId());
+                    postCall.enqueue(new Callback<Post>() {
+                        @Override
+                        public void onResponse(Call<Post> call, Response<Post> response) {
+                            post = response.body();
+
+                            Intent intent = new Intent(ReadPostActivity.this, EditPostActivity.class);
+                            SharedPreferences.Editor editor = sharedPreferences.edit();
+
+                            editor.putInt("Post", post.getId());
+                            editor.commit();
+                            startActivity(intent);
+                            editor.clear();
+                        }
+
+                        @Override
+                        public void onFailure(Call<Post> call, Throwable t) {
+
+                        }
+                    });
+                }else{
+                    Toast.makeText(ReadPostActivity.this, "You cant edit this post", Toast.LENGTH_SHORT).show();
+                }
+                return true;
+
         }
         return super.onOptionsItemSelected(item);
     }

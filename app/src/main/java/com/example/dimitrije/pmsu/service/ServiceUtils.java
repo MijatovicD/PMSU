@@ -28,6 +28,7 @@ public class ServiceUtils {
     public static final String LOGIN = "users/{username}/{password}";
     public static final String USERNAME = "users/{username}";
     public static final String COMMENTBYID = "comments/post/{id}";
+    public static final String COMMENTID = "comments/{id}";
     public static final String GETTAGBYPOST = "tags/post/{id}";
     public static final String ADDCOMMENT = "comments/add";
     public static final String DELETECOMMENT = "comments/delete/{id}";
@@ -37,6 +38,11 @@ public class ServiceUtils {
     public static final String ADDUSER = "users/add";
     public static final String TAGS = "tags/all";
     public static final String UPDATEUSER = "users/update/{id}";
+    public static final String UPDATEPOST = "posts/update/{id}";
+    public static final String USERS = "users/all";
+    public static final String SORTPOST = "posts/date";
+    public static final String SORTPOSTBYLIKE = "posts/like";
+    public static final String UPDATECOMMENT = "comments/update/{id]";
 
     public static OkHttpClient test(){
         HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();

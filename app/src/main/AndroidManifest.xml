@@ -53,8 +53,16 @@
             android:name="com.google.android.maps.v2.API_KEY"
             android:value="" />
 
-        <activity android:name=".RegistrationActivity" />
-        <activity android:name=".EditUserActivity"></activity>
+        <activity android:name=".RegistrationActivity"
+            android:label="Registration"/>
+        <activity android:name=".EditUserActivity"
+            android:label="Edit users"/>
+        <activity android:name=".EditPostActivity"
+            android:label="Edit post"/>
+        <activity android:name=".EditUsersActivity"
+            android:label="Edit profile"/>
+        <activity android:name=".EditCommentActivity"
+            android:label="Edit comment"></activity>
     </application>
 
 </manifest>

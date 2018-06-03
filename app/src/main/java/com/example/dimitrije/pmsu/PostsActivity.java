@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.preference.PreferenceManager;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
@@ -18,6 +19,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.SearchView;
@@ -61,6 +63,7 @@ public class PostsActivity extends AppCompatActivity {
     private ArrayList<NavItem> mNavItem = new ArrayList<>();
     private List<Post> posts = new ArrayList<>();
     private List<Tag> tags = new ArrayList<>();
+    private List<User> users = new ArrayList<>();
     private SharedPreferences sharedPreferences;
     private boolean sortPostByDate;
     private boolean sortPostByPopularity;
@@ -68,11 +71,12 @@ public class PostsActivity extends AppCompatActivity {
     private UserService userService;
     private TagService tagService;
     private PostAdapter postAdapter;
+    private Button editUser;
 
     private ListView listView;
 
     private Post post = new Post();
-    private Post post1 = new Post();
+    private User user = new User();
     private Tag tag = new Tag();
 
     @Override
@@ -130,7 +134,6 @@ public class PostsActivity extends AppCompatActivity {
             userText.setText(sharedPreferences.getString(LoginActivity.Name, ""));
         }
 
-
         postService = ServiceUtils.postService;
         userService = ServiceUtils.userService;
         tagService = ServiceUtils.tagService;
@@ -171,6 +174,47 @@ public class PostsActivity extends AppCompatActivity {
         });
 
 
+        Call userCall = userService.getUsers();
+
+        userCall.enqueue(new Callback<List<User>>() {
+            @Override
+            public void onResponse(Call<List<User>> call, Response<List<User>> response) {
+
+                if(response.isSuccessful()){
+                    users = response.body();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<List<User>> call, Throwable t) {
+                Toast.makeText(getApplicationContext(), t.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        editUser = findViewById(R.id.editProfile);
+
+        editUser.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                String userPref = sharedPreferences.getString(LoginActivity.Username, "");
+
+                Call<User> call = userService.getByUsername(userPref);
+
+                call.enqueue(new Callback<User>() {
+                    @Override
+                    public void onResponse(Call<User> call, Response<User> response) {
+                        System.out.println("USERNAME" + user.getUsername());
+                        Intent intent = new Intent(PostsActivity.this, EditUsersActivity.class);
+                        startActivity(intent);
+                    }
+
+                    @Override
+                    public void onFailure(Call<User> call, Throwable t) {
+
+                    }
+                });
+            }
+        });
 
 /*
         post.setTitle("Mark Zucerberg prodao Facebook");
@@ -250,21 +294,41 @@ public class PostsActivity extends AppCompatActivity {
     }
 
     private void sortDate(){
-        Collections.sort(posts, new Comparator<Post>() {
+        Call<List<Post>> callPost = postService.sortPosts();
+
+        callPost.enqueue(new Callback<List<Post>>() {
             @Override
-            public int compare(Post post, Post posts1) {
-                return posts1.getDate().compareTo(post.getDate());
+            public void onResponse(Call<List<Post>> call, Response<List<Post>> response) {
+                posts = response.body();
+
+                PostAdapter adapter = new PostAdapter(PostsActivity.this, posts);
+                listView.setAdapter(adapter);
+            }
+
+            @Override
+            public void onFailure(Call<List<Post>> call, Throwable t) {
+
             }
         });
     }
 
     private void sortPopularity(){
-        Collections.sort(posts, new Comparator<Post>() {
-            @Override
-            public int compare(Post post, Post posts1) {
-                return posts1.getLikes() - post.getLikes();
-            }
-        });
+       Call<List<Post>> callLike = postService.sortPostsByLike();
+
+       callLike.enqueue(new Callback<List<Post>>() {
+           @Override
+           public void onResponse(Call<List<Post>> call, Response<List<Post>> response) {
+               posts = response.body();
+
+               PostAdapter adapter = new PostAdapter(PostsActivity.this, posts);
+               listView.setAdapter(adapter);
+           }
+
+           @Override
+           public void onFailure(Call<List<Post>> call, Throwable t) {
+
+           }
+       });
     }
 
 
