@@ -7,6 +7,9 @@ package com.example.dimitrije.pmsu.service;
 
 
 
+import android.graphics.Bitmap;
+
+import com.example.dimitrije.pmsu.util.ImageSerialization;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
@@ -20,7 +23,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class ServiceUtils {
 
-    public static final String SERVICE_API_PATH = "http://192.168.0.12:8080/api/";
+    public static final String SERVICE_API_PATH = "http://192.168.0.13:8080/api/";
     public static final String POSTS = "posts/all";
     public static final String POSTID ="posts/{id}";
     public static final String POSTADD = "posts/add";
@@ -42,7 +45,11 @@ public class ServiceUtils {
     public static final String USERS = "users/all";
     public static final String SORTPOST = "posts/date";
     public static final String SORTPOSTBYLIKE = "posts/like";
-    public static final String UPDATECOMMENT = "comments/update/{id]";
+    public static final String UPDATECOMMENT = "comments/update/{id}";
+    public static final String SEARCHPOSTBYUSER = "posts/searchUsers/{username}";
+    public static final String SEARCHPOSTBYTAG = "posts/searchTags/{name}";
+    public static final String SORTCOMMENT = "comments/date/{id}";
+    public static final String SORTCOMMENTBYLIKE = "comments/like";
 
     public static OkHttpClient test(){
         HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
@@ -57,8 +64,10 @@ public class ServiceUtils {
         return client;
     }
 
-    static Gson gson = new GsonBuilder().setDateFormat("yyyy-MM-dd'T'HH:ss.SSSZ").create();
+    //static Gson gson = new GsonBuilder().setDateFormat("yyyy-MM-dd'T'HH:ss.SSSZ").create();
 
+    static Gson gson = new GsonBuilder().registerTypeAdapter(Bitmap.class, ImageSerialization.getBitmapTypeAdapter())
+            .setDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ").create();
 
     public static Retrofit retrofit = new Retrofit.Builder()
             .baseUrl(SERVICE_API_PATH)

@@ -50,6 +50,12 @@ public interface PostService {
     @GET(ServiceUtils.SORTPOSTBYLIKE)
     Call<List<Post>> sortPostsByLike();
 
+    @GET(ServiceUtils.SEARCHPOSTBYUSER)
+    Call<List<Post>> searchPostByUser(@Path("username") String username);
+
+    @GET(ServiceUtils.SEARCHPOSTBYTAG)
+    Call<List<Post>> searchPostByTag(@Path("name") String name);
+
     @PUT(ServiceUtils.UPDATEPOST)
     Call<Post> updatePost(@Body Post post, @Path("id") int id);
 

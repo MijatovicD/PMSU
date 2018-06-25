@@ -120,6 +120,8 @@ public class CommentFragment extends Fragment {
                         CommentAdapter commentAdapter = new CommentAdapter(getContext(), comments);
 
                         listView.setAdapter(commentAdapter);
+
+                        consultPreferences();
                     }
 
             }
@@ -134,7 +136,7 @@ public class CommentFragment extends Fragment {
         userService = ServiceUtils.userService;
 
         sharedPreferences = getActivity().getSharedPreferences(LoginActivity.MyPres, Context.MODE_PRIVATE);
-        String userPrefe = sharedPreferences.getString(LoginActivity.Username, "");
+        final String userPrefe = sharedPreferences.getString(LoginActivity.Username, "");
 
         Call<User> callUser = userService.getByUsername(userPrefe);
 
@@ -151,18 +153,22 @@ public class CommentFragment extends Fragment {
         });
 
         sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getContext());
-        consultPreferences();
 
 
         addButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                addComment();
-                titleEdit.setText("");
-                descriptionEdit.setText("");
-                FragmentTransaction t = getActivity().getSupportFragmentManager().beginTransaction();
-                t.setAllowOptimization(true);
-                t.detach(CommentFragment.this).attach(CommentFragment.this).commitAllowingStateLoss();
+
+                if (userPrefe.equals("")){
+                    Toast.makeText(getContext(), "You cant add comment", Toast.LENGTH_SHORT).show();
+                }else{
+                    addComment();
+                    titleEdit.setText("");
+                    descriptionEdit.setText("");
+                    FragmentTransaction t = getActivity().getSupportFragmentManager().beginTransaction();
+                    t.setAllowOptimization(true);
+                    t.detach(CommentFragment.this).attach(CommentFragment.this).commitAllowingStateLoss();
+                }
             }
         });
 
@@ -211,19 +217,39 @@ public class CommentFragment extends Fragment {
     }
 
     public void sortByDate(){
-        Collections.sort(comments, new Comparator<Comment>() {
+        Call<List<Comment>> callComment = commentService.sortComment();
+
+        callComment.enqueue(new Callback<List<Comment>>() {
             @Override
-            public int compare(Comment comment, Comment comment1) {
-                return comment1.getDate().compareTo(comment.getDate());
+            public void onResponse(Call<List<Comment>> call, Response<List<Comment>> response) {
+                comments = response.body();
+                CommentAdapter commentAdapter = new CommentAdapter(getContext(), comments);
+
+                listView.setAdapter(commentAdapter);
+            }
+
+            @Override
+            public void onFailure(Call<List<Comment>> call, Throwable t) {
+
             }
         });
     }
 
     public void sortByPopularity(){
-        Collections.sort(comments, new Comparator<Comment>() {
+        Call<List<Comment>> call = commentService.sortCommentByLike();
+
+        call.enqueue(new Callback<List<Comment>>() {
             @Override
-            public int compare(Comment comment, Comment comment1) {
-                return comment1.getLikes() - comment.getLikes();
+            public void onResponse(Call<List<Comment>> call, Response<List<Comment>> response) {
+                comments = response.body();
+                CommentAdapter commentAdapter = new CommentAdapter(getContext(), comments);
+
+                listView.setAdapter(commentAdapter);
+            }
+
+            @Override
+            public void onFailure(Call<List<Comment>> call, Throwable t) {
+
             }
         });
     }

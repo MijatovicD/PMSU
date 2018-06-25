@@ -31,6 +31,12 @@ public interface CommentService {
     @GET(ServiceUtils.COMMENTID)
     Call<Comment> getCommentId(@Path("id") int id);
 
+    @GET(ServiceUtils.SORTCOMMENT)
+    Call<List<Comment>> sortComment();
+
+    @GET(ServiceUtils.SORTCOMMENTBYLIKE)
+    Call<List<Comment>> sortCommentByLike();
+
     @POST(ServiceUtils.ADDCOMMENT)
     Call<Comment> addComment(@Body Comment comment);
 

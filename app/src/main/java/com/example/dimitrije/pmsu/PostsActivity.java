@@ -74,6 +74,8 @@ public class PostsActivity extends AppCompatActivity {
     private Button editUser;
 
     private ListView listView;
+    private String userPref;
+    private String userRole;
 
     private Post post = new Post();
     private User user = new User();
@@ -134,6 +136,10 @@ public class PostsActivity extends AppCompatActivity {
             userText.setText(sharedPreferences.getString(LoginActivity.Name, ""));
         }
 
+
+        userPref = sharedPreferences.getString(LoginActivity.Username, "");
+        userRole = sharedPreferences.getString(LoginActivity.Role, "");
+
         postService = ServiceUtils.postService;
         userService = ServiceUtils.userService;
         tagService = ServiceUtils.tagService;
@@ -160,15 +166,15 @@ public class PostsActivity extends AppCompatActivity {
 
         callTags.enqueue(new Callback<List<Tag>>() {
             @Override
-            public void onResponse(Call<List<Tag>> call, Response<List<Tag>> response) {
+            public void onResponse(Call<List<Tag>> calltag, Response<List<Tag>> res) {
 
-                if(response.isSuccessful()){
-                    tags = response.body();
+                if(res.isSuccessful()){
+                    tags = res.body();
                 }
             }
 
             @Override
-            public void onFailure(Call<List<Tag>> call, Throwable t) {
+            public void onFailure(Call<List<Tag>> calltag,Throwable t) {
                 Toast.makeText(getApplicationContext(), t.getMessage(), Toast.LENGTH_SHORT).show();
             }
         });
@@ -178,7 +184,7 @@ public class PostsActivity extends AppCompatActivity {
 
         userCall.enqueue(new Callback<List<User>>() {
             @Override
-            public void onResponse(Call<List<User>> call, Response<List<User>> response) {
+            public void onResponse(Call<List<User>> calluser, Response<List<User>> response) {
 
                 if(response.isSuccessful()){
                     users = response.body();
@@ -186,7 +192,7 @@ public class PostsActivity extends AppCompatActivity {
             }
 
             @Override
-            public void onFailure(Call<List<User>> call, Throwable t) {
+            public void onFailure(Call<List<User>> calluser, Throwable t) {
                 Toast.makeText(getApplicationContext(), t.getMessage(), Toast.LENGTH_SHORT).show();
             }
         });
@@ -215,7 +221,6 @@ public class PostsActivity extends AppCompatActivity {
                 });
             }
         });
-
 /*
         post.setTitle("Mark Zucerberg prodao Facebook");
         post.setDate(new Date(2018-1900, 04-01, 23));
@@ -349,9 +354,14 @@ public class PostsActivity extends AppCompatActivity {
                 startActivity(intent);
                 return true;
             case R.id.menuCreate:
-                Intent create = new Intent(this, CreatePostsActivity.class);
-                startActivity(create);
-                return true;
+                String userPref = sharedPreferences.getString(LoginActivity.Username, "");
+                if (userPref.contains("")){
+                    Toast.makeText(getApplicationContext(), "Please register to add post", Toast.LENGTH_SHORT).show();
+                }else{
+                    Intent create = new Intent(this, CreatePostsActivity.class);
+                    startActivity(create);
+                    return true;
+                }
         }
         return super.onOptionsItemSelected(item);
     }
@@ -366,49 +376,84 @@ public class PostsActivity extends AppCompatActivity {
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String s) {
-             /*   ArrayList<Post> postList = new ArrayList<>();
+                searchUser(s);
+                searchTag(s);
 
-                for (Post p : posts){
-                    if (p.getAuthor().getUsername().contains(s.toLowerCase())){
-                        postList.add(p);
-                    }
-                }
-
-                PostAdapter postAdapter = new PostAdapter(PostsActivity.this, postList);
-                listView.setAdapter(postAdapter);
-*/
-                return false;
+                return true;
             }
 
             @Override
             public boolean onQueryTextChange(String s) {
-              /*List<Post> postList = new ArrayList<>();
-
-
-               for (Tag t : tags){
-                   if (t.getName().contains(s.toLowerCase())){
-                       t.getPosts().addAll(postList);
-                   }
-               }
-
-               PostAdapter postAdapter = new PostAdapter(PostsActivity.this, postList);
-               listView.setAdapter(postAdapter);*/
-                ArrayList<Post> postList = new ArrayList<>();
-
-                for (Post p : posts){
-                    if (p.getAuthor().getUsername().contains(s.toLowerCase())){
-                        postList.add(p);
-                    }
-                }
-
-                PostAdapter postAdapter = new PostAdapter(PostsActivity.this, postList);
-                listView.setAdapter(postAdapter);
-
-
+                getPost();
              return true;
             }
         });
         return true;
+    }
+
+    public void searchUser(String username){
+        Call<List<Post>> call = postService.searchPostByUser(username);
+
+        call.enqueue(new Callback<List<Post>>() {
+            @Override
+            public void onResponse(Call<List<Post>> call, Response<List<Post>> response) {
+
+                if(response.isSuccessful()){
+                    posts = response.body();
+                    PostAdapter postAdapter = new PostAdapter(PostsActivity.this, posts);
+                    listView.setAdapter(postAdapter);
+                }else{
+                    Toast.makeText(getApplicationContext(), "User dont exist", Toast.LENGTH_SHORT).show();
+                }
+
+            }
+
+            @Override
+            public void onFailure(Call<List<Post>> call, Throwable t) {
+                Toast.makeText(getApplicationContext(), "User dont exist", Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    public void searchTag(String name){
+        Call<List<Post>> call = postService.searchPostByTag(name);
+
+        call.enqueue(new Callback<List<Post>>() {
+            @Override
+            public void onResponse(Call<List<Post>> call, Response<List<Post>> response) {
+
+                if(response.isSuccessful()){
+                    posts = response.body();
+                    PostAdapter postAdapter = new PostAdapter(PostsActivity.this, posts);
+                    listView.setAdapter(postAdapter);
+                }else{
+                    Toast.makeText(getApplicationContext(), "Tag dont exist", Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<List<Post>> call, Throwable t) {
+                Toast.makeText(getApplicationContext(), "Tag dont exist", Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    public void getPost(){
+        Call<List<Post>> call = postService.getPosts();
+
+        call.enqueue(new Callback<List<Post>>() {
+            @Override
+            public void onResponse(Call<List<Post>> call, Response<List<Post>> response) {
+                posts = response.body();
+                PostAdapter postAdapter = new PostAdapter(PostsActivity.this, posts);
+                listView.setAdapter(postAdapter);
+            }
+
+            @Override
+            public void onFailure(Call<List<Post>> call, Throwable t) {
+
+            }
+        });
     }
 
     private class DrawerItemClickListener implements ListView.OnItemClickListener{
@@ -419,25 +464,36 @@ public class PostsActivity extends AppCompatActivity {
     }
 
     private void selectItemFromDrawer(int position){
-        if (position == 0){
-
-        }
-        else if (position == 1){
+        if (position == 1){
             Intent intent = new Intent(this, SettingsActivity.class);
             startActivity(intent);
         }
-        else if (position == 2){
-            Intent i = new Intent(this, CreatePostsActivity.class);
-            startActivity(i);
+        if (position == 2){
+            if (userPref.equals("")){
+                Toast.makeText(getApplicationContext(), "You dont have permision to create post", Toast.LENGTH_SHORT).show();
+            }else if (userRole.equals("COMMENTATOR")){
+                Toast.makeText(getApplicationContext(), "You cant do this", Toast.LENGTH_SHORT).show();
+            }
+            else{
+                Intent edit = new Intent(this, CreatePostsActivity.class);
+                startActivity(edit);
+            }
         }
-        else if (position == 3){
+        if (position == 3){
             FragmentTransition.to(MapFragment.newInstance(), this, false);
         }
-        else if (position == 4){
-            Intent edit = new Intent(this, EditUserActivity.class);
-            startActivity(edit);
+        if (position == 4){
+            if (userPref.equals("")){
+                Toast.makeText(getApplicationContext(), "You dont have permision to edit users", Toast.LENGTH_SHORT).show();
+            }
+            else if (userRole.equals("ADMIN")){
+                Intent edit = new Intent(this, EditUserActivity.class);
+                startActivity(edit);
+            }else {
+                Toast.makeText(getApplicationContext(), "You dont have permission", Toast.LENGTH_SHORT).show();
+            }
         }
-        else if (position == 5){
+        if (position == 5){
             Intent ite = new Intent(this, LoginActivity.class);
             sharedPreferences.edit().clear().commit();
             startActivity(ite);

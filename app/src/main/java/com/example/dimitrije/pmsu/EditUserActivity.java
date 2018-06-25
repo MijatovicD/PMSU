@@ -3,6 +3,7 @@ package com.example.dimitrije.pmsu;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -36,6 +37,7 @@ public class EditUserActivity extends AppCompatActivity {
     private UserService userService;
     private SharedPreferences sharedPreferences;
     private ListView listView;
+    private FloatingActionButton floatingActionButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,6 +46,8 @@ public class EditUserActivity extends AppCompatActivity {
 
 
         listView = findViewById(R.id.userEditList);
+        floatingActionButton = findViewById(R.id.fab);
+
 
         sharedPreferences = getSharedPreferences(LoginActivity.MyPres, Context.MODE_PRIVATE);
 
@@ -67,30 +71,38 @@ public class EditUserActivity extends AppCompatActivity {
             }
         });
 
+        floatingActionButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(EditUserActivity.this, RegistrationActivity.class);
+                startActivity(intent);
+            }
+        });
+
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
 
-                user = users.get(i);
+                    user = users.get(i);
 
-                userService = ServiceUtils.userService;
+                    userService = ServiceUtils.userService;
 
-                Call<User> call = userService.getByUsername(user.getUsername());
+                    Call<User> call = userService.getByUsername(user.getUsername());
 
-                call.enqueue(new Callback<User>() {
-                    @Override
-                    public void onResponse(Call<User> call, Response<User> response) {
-                        Intent intent = new Intent(EditUserActivity.this, EditUsersActivity.class);
-                        intent.putExtra("User", new Gson().toJson(user));
-                        startActivity(intent);
-                    }
+                    call.enqueue(new Callback<User>() {
+                        @Override
+                        public void onResponse(Call<User> call, Response<User> response) {
+                            Intent intent = new Intent(EditUserActivity.this, EditUsersActivity.class);
+                            intent.putExtra("User", new Gson().toJson(user));
+                            startActivity(intent);
+                        }
 
-                    @Override
-                    public void onFailure(Call<User> call, Throwable t) {
+                        @Override
+                        public void onFailure(Call<User> call, Throwable t) {
 
-                    }
-                });
-            }
+                        }
+                    });
+                }
         });
     }
 }

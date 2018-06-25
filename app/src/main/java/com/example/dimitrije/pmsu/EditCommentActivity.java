@@ -1,6 +1,7 @@
 package com.example.dimitrije.pmsu;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -12,6 +13,7 @@ import com.example.dimitrije.pmsu.adapters.CommentAdapter;
 import com.example.dimitrije.pmsu.model.Comment;
 import com.example.dimitrije.pmsu.service.CommentService;
 import com.example.dimitrije.pmsu.service.ServiceUtils;
+import com.google.gson.Gson;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -24,7 +26,7 @@ public class EditCommentActivity extends AppCompatActivity {
     private EditText descriptionEdit;
     private Button btnEdit;
     private Comment comment = new Comment();
-    private SharedPreferences sharedPreferences;
+    private int commentId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,11 +37,10 @@ public class EditCommentActivity extends AppCompatActivity {
         descriptionEdit = findViewById(R.id.descriptionCommentEdit);
         btnEdit = findViewById(R.id.btnEditComment);
 
-        sharedPreferences = getSharedPreferences(CommentAdapter.MyPreferences, Context.MODE_PRIVATE);
-
-        int commentId = sharedPreferences.getInt("Comment", comment.getId());
 
         commentService = ServiceUtils.commentService;
+
+        commentId = getIntent().getIntExtra("commentId", 0);
 
         Call<Comment> call = commentService.getCommentId(commentId);
 
@@ -48,8 +49,10 @@ public class EditCommentActivity extends AppCompatActivity {
             public void onResponse(Call<Comment> call, Response<Comment> response) {
                 comment = response.body();
 
-                titleEdit.setText(comment.getTitle());
-                descriptionEdit.setText(comment.getDescription());
+                if (comment != null){
+                    titleEdit.setText(comment.getTitle());
+                    descriptionEdit.setText(comment.getDescription());
+                }
             }
 
             @Override
@@ -71,7 +74,7 @@ public class EditCommentActivity extends AppCompatActivity {
 
         commentService = ServiceUtils.commentService;
 
-        Call<Comment> callComment = commentService.updateComment(comment, comment.getId());
+        Call<Comment> callComment = commentService.updateComment(comment, commentId);
 
         callComment.enqueue(new Callback<Comment>() {
             @Override

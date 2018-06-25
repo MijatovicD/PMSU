@@ -198,7 +198,6 @@ public class ReadPostActivity extends AppCompatActivity {
                 if(userPrefe.equals(post.getAuthor().getUsername())){
                     Call<Post> postCall = postService.getPost(post.getId());
 
-                    System.out.println("POOOOOOOOOOOOOOOOOOOOOOOOOST" + post.getId());
                     postCall.enqueue(new Callback<Post>() {
                         @Override
                         public void onResponse(Call<Post> call, Response<Post> response) {

@@ -117,7 +117,7 @@ public class MapFragment extends Fragment implements LocationListener, OnMapRead
     }
 
 
-    private void showLocatonDialog() {
+ /*   private void showLocatonDialog() {
         if (dialog == null) {
             dialog = new LocationDialog(getActivity()).prepareDialog();
         } else {
@@ -127,7 +127,7 @@ public class MapFragment extends Fragment implements LocationListener, OnMapRead
         }
 
         dialog.show();
-    }
+    }*/
 
     @Override
     public void onResume() {
@@ -139,7 +139,7 @@ public class MapFragment extends Fragment implements LocationListener, OnMapRead
         boolean wifi = locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
 
         if (!gps && !wifi) {
-            showLocatonDialog();
+            //showLocatonDialog();
         } else {
             if (checkLocationPermission()) {
                 if (ContextCompat.checkSelfPermission(getContext(),

@@ -37,17 +37,12 @@ import android.widget.Toast;
 
 import com.example.dimitrije.pmsu.adapters.DrawerListAdapter;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
-import java.util.Locale;
-import java.util.Map;
 
-import com.example.dimitrije.pmsu.dialogs.LocationDialog;
 import com.example.dimitrije.pmsu.fragments.MapFragment;
 import com.example.dimitrije.pmsu.model.Comment;
 import com.example.dimitrije.pmsu.model.NavItem;
@@ -59,6 +54,8 @@ import com.example.dimitrije.pmsu.service.ServiceUtils;
 import com.example.dimitrije.pmsu.service.TagService;
 import com.example.dimitrije.pmsu.service.UserService;
 import com.example.dimitrije.pmsu.tools.FragmentTransition;
+import com.example.dimitrije.pmsu.util.ImageSerialization;
+import com.google.gson.stream.JsonWriter;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -95,6 +92,7 @@ public class CreatePostsActivity extends AppCompatActivity {
     private AlertDialog dialog;
     private Bitmap bitmap;
     private TextView locationText;
+    private JsonWriter jsonWriter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -213,12 +211,12 @@ public class CreatePostsActivity extends AppCompatActivity {
 
         post.setTitle(title);
         post.setDescription(description);
-        System.out.println("USERNAME + " + user.getUsername());
         post.setAuthor(user);
-        post.setLikes(0);
         post.setDislikes(0);
+        post.setLikes(0);
         Date date = new Date();
         post.setDate(date);
+        post.setPhoto(bitmap);
 
         Float latitude = map.getFloat(MapFragment.Latitude, 0);
         Float longitude = map.getFloat(MapFragment.Longitude, 0);
@@ -241,19 +239,6 @@ public class CreatePostsActivity extends AppCompatActivity {
 
     }
 
-
-
-    private void showLocationDialog(){
-        if(dialog == null){
-            dialog = new LocationDialog(this).prepareDialog();
-        }else{
-            if(dialog.isShowing()){
-                dialog.dismiss();
-            }
-        }
-        dialog.show();
-    }
-
     public boolean validate(){
         if(titleText.equals("") || titleText == null){
             Toast.makeText(this, "Morate uneti title", Toast.LENGTH_SHORT).show();
@@ -273,7 +258,7 @@ public class CreatePostsActivity extends AppCompatActivity {
 
         List<String> tagFilter = Arrays.asList(separator);
         for (String tagStrings : tagFilter.subList(1, tagFilter.size())){
-            tag.setName("#" + tagString);
+            tag.setName(tagString);
 
             Call<Tag> call = tagService.addTag(tag);
             call.enqueue(new Callback<Tag>() {
@@ -291,14 +276,6 @@ public class CreatePostsActivity extends AppCompatActivity {
         }
     }
 
-
-    public void addImage(){
-        Bitmap bitmap = BitmapFactory.decodeResource(getResources(),R.id.imageContainer);
-        ByteArrayOutputStream stream = new ByteArrayOutputStream();
-        bitmap.compress(Bitmap.CompressFormat.PNG, 90, stream); //compress to which format you want.
-        byte [] byte_arr = stream.toByteArray();
-        String image_str = Base64.encodeToString(byte_arr, Base64.DEFAULT);
-    }
 
     public void addTagInPost(int postId, int tagId){
         Call<Post> call = postService.addTagInPost(postBody.getId(), tagBody.getId());
@@ -322,18 +299,21 @@ public class CreatePostsActivity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        if(requestCode == 1 && resultCode == Activity.RESULT_OK){
-            Uri image = data.getData();
+        if(requestCode == 1 && resultCode == Activity.RESULT_OK) {
+            Uri selectedImage = data.getData();
             bitmap = null;
             try {
-                bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), image);
-                ImageView view = findViewById(R.id.imageContainer);
-                view.setImageBitmap(bitmap);
-            }catch (IOException e){
+                bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), selectedImage);
+
+                ImageView image = findViewById(R.id.imageContainer);
+                image.setImageBitmap(bitmap);
+
+            } catch (IOException e) {
                 e.printStackTrace();
             }
         }
     }
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {

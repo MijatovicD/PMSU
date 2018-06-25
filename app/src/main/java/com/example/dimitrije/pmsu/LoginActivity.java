@@ -31,6 +31,7 @@ public class LoginActivity extends AppCompatActivity {
     public static final String Name = "name";
     public static final String MyPres = "MyPre";
     public static final String Username = "usernameKey";
+    public static final String Role = "role";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,6 +57,10 @@ public class LoginActivity extends AppCompatActivity {
                     editor.putString(Username, username);
                     editor.commit();
                     doLogin(username, password);
+                }else{
+                    editor.clear().commit();
+                    Intent intent = new Intent(LoginActivity.this, PostsActivity.class);
+                    startActivity(intent);
                 }
             }
         });
@@ -94,6 +99,7 @@ public class LoginActivity extends AppCompatActivity {
 
                     SharedPreferences.Editor editor = sharedPreferences.edit();
                     editor.putString(Name, user.getName());
+                    editor.putString(Role, String.valueOf(user.getRole()));
                     editor.commit();
 
                     Intent intent = new Intent(LoginActivity.this, PostsActivity.class);
